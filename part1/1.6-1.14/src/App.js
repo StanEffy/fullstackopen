@@ -12,7 +12,7 @@ function App() {
     const countAverage = () => (good - bad)  / countAll()
     const countPositive = () => good / countAll()
   return (
-    <div className="App">
+    <div>
       <Feedback setGood={setGood} setNeutral={setNeutral} setBad={setBad}/>
       <Statistics all={countAll()} good={good} bad={bad} neutral={neutral}/>
       <Total all={countAll()} average={countAverage()} positive={countPositive()}/>

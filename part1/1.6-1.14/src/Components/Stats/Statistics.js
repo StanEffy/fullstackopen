@@ -5,11 +5,11 @@ const Statistics = ({all, good, neutral, bad}) => {
     return (
         <div>
             <h2>statistics</h2>
-            {all > 0 ? <>
+            {all > 0 ? <table>
                 <StatisticLine text={"good"} value={good}/>
                 <StatisticLine text={"neutral"} value={neutral}/>
                 <StatisticLine text={"bad"} value={bad}/>
-           </> : <p>No feedback given</p>}
+           </table> : <p>No feedback given</p>}
         </div>
     );
 };

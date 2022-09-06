@@ -2,11 +2,11 @@ import React from 'react';
 
 const Total = ({all, average, positive}) => {
     return (
-        <div>
-            {all > 0 ?<p>All {all}</p>:null}
-            {all > 0 ? <p>average {average}</p> : null}
-            {all > 0 ? <p>positive {positive * 100}%</p> : null}
-        </div>
+        <table>
+            {all > 0 ?<tr> <th>All</th> <td>{all}</td></tr>:null}
+            {all > 0 ? <tr> <th>Average</th> <td>{average}</td></tr> : null}
+            {all > 0 ? <tr> <th>Positive</th> <td>{positive * 100}%</td></tr> : null}
+        </table>
     );
 };
 
