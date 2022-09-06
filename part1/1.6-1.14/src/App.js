@@ -14,7 +14,7 @@ function App() {
   return (
     <div className="App">
       <Feedback setGood={setGood} setNeutral={setNeutral} setBad={setBad}/>
-      <Statistics good={good} bad={bad} neutral={neutral}/>
+      <Statistics all={countAll()} good={good} bad={bad} neutral={neutral}/>
       <Total all={countAll()} average={countAverage()} positive={countPositive()}/>
     </div>
   );
