@@ -2,9 +2,21 @@ import { useEffect, useRef, useState } from "react"
 import Form from "./Components/Form/Form"
 
 import { addNumber, deleteNumber, getNumbers, updateNumber } from "./api/api"
+import Announcement from "./Components/Anouncement/Anouncement"
+import Person from "./Components/Persons/Person"
+import Filter from "./Components/Filter/Filter"
 
 const App = () => {
 	const [persons, setPersons] = useState([])
+	const [notification, setNotification] = useState(null)
+
+	const handleNotification = (type, text) => {
+		setNotification({
+			type,
+			message: text,
+		})
+	}
+
 	useEffect(() => {
 		getNumbers().then((data) => {
 			setPersons([...data])
@@ -17,9 +29,17 @@ const App = () => {
 	const number = useRef()
 
 	const handleDelete = (id) => {
-		deleteNumber(id).then(() =>
-			setPersons((prev) => [...prev.filter((p) => p.id !== id)])
-		)
+		deleteNumber(id)
+			.then((res) => {
+				setPersons((prev) => [...prev.filter((p) => p.id !== id)])
+				handleNotification("success", `User was succesfully deleted!`)
+			})
+			.catch((e) => {
+				handleNotification("error", `${e.message}`)
+				getNumbers().then((data) => {
+					setPersons([...data])
+				})
+			})
 	}
 
 	const confirmNewNum = (newPerson, persons) => {
@@ -45,32 +65,44 @@ const App = () => {
 
 		!persons.find((p) => p.name === newPerson.name)
 			? addNumber(newPerson).then((response) => {
-					response.status === 201
-						? setPersons((prev) => [...prev, response.data])
-						: alert("Something went wrong")
+					if (response.name === newPerson.name) {
+						setPersons((prev) => [...prev, response])
+						handleNotification(
+							"success",
+							`User ${response.name} was succesfully added!`
+						)
+					}
+					alert("Something went wrong")
 			  })
 			: confirmNewNum(newPerson, persons)
 	}
 
+	useEffect(() => {
+		if (notification) {
+			const timeoutId = setTimeout(() => {
+				setNotification(null)
+			}, 4000)
+			return () => {
+				clearTimeout(timeoutId)
+			}
+		}
+	}, [notification])
+
 	return (
 		<div>
 			<h2>Phonebook</h2>
-			<div>
-				<span>Filter:</span>
-				<input type="text" ref={filter} />
-			</div>
+			<Filter filter={filter} />
+			{notification ? (
+				<Announcement
+					type={notification.type}
+					message={notification.message}
+				/>
+			) : null}
 			<Form name={name} number={number} handleSubmit={handleSubmit} />
 			<h2>Numbers</h2>
 			<ul>
 				{persons.map((p) => (
-					<li>
-						<p key={p.name}>
-							{p.name} {p.number}
-						</p>
-						<button onClick={() => handleDelete(p.id)}>
-							delete
-						</button>
-					</li>
+					<Person key={p.name} p={p} handleDelete={handleDelete} />
 				))}
 			</ul>
 		</div>

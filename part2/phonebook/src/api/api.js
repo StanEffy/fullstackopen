@@ -11,4 +11,4 @@ export const addNumber = (newPerson) =>
 		return response.data
 	})
 
-export const deleteNumber = (id) => api.delete(`/${id}`).then((res) => id)
+export const deleteNumber = (id) => api.delete(`/${id}`).then((res) => res)
