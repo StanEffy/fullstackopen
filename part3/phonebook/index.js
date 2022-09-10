@@ -1,5 +1,6 @@
 const express = require('express')
 const app = express()
+const morgan = require('morgan')
 
 let phonebook = [
 	{ 
@@ -25,6 +26,12 @@ let phonebook = [
 ]
 
 app.use(express.json())
+
+morgan.token('body', req => {
+  return JSON.stringify(req.body)
+})
+
+app.use(morgan(":method :url :status :res[content-length] - :response-time ms :body"))
 
 app.get('/', (request, response) => {
   response.send('<h1>Hello World!</h1>')
@@ -64,7 +71,6 @@ app.delete('/api/persons/:id', (req, res) => {
 app.post('/api/persons', (req, res) => {
 	const body = req.body
 
-	console.log(req)
 	if(phonebook.find(p => p.name === body.name.trim())){
 		return res.status(400).json({
 			error: 'name should be unique'
