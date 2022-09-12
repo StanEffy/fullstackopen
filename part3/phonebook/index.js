@@ -1,30 +1,16 @@
 const express = require('express')
 const app = express()
 const morgan = require('morgan')
+const cors = require('cors')
+const mongoose = require('mongoose')
+const Phone = require('./schema/phone')
+const errorHandler = require('./error-handler')
 
-let phonebook = [
-	{ 
-		"id": 1,
-		"name": "Arto Hellas", 
-		"number": "040-123456"
-	},
-	{ 
-		"id": 2,
-		"name": "Ada Lovelace", 
-		"number": "39-44-5323523"
-	},
-	{ 
-		"id": 3,
-		"name": "Dan Abramov", 
-		"number": "12-43-234345"
-	},
-	{ 
-		"id": 4,
-		"name": "Mary Poppendieck", 
-		"number": "39-23-6423122"
-	}
-]
+const unknownEndpoint = (request, response) => {
+  response.status(404).send({ error: 'unknown endpoint' })
+}
 
+app.use(cors())
 app.use(express.json())
 
 morgan.token('body', req => {
@@ -33,68 +19,92 @@ morgan.token('body', req => {
 
 app.use(morgan(":method :url :status :res[content-length] - :response-time ms :body"))
 
-app.get('/', (request, response) => {
-  response.send('<h1>Hello World!</h1>')
+
+app.get('/', (request, res) => {
+  res.send('<h1>Hello World!</h1>')
 })
 
 
-
-app.get('/api/persons', (request, response) => {
-  response.json(phonebook)
+app.get('/api/persons', (request, res) => {
+	Phone.find({}).then(result => {
+		res.json(result)
+	})
 })
 
-app.get('/info', (request, response) => {
-  response.send(`
+app.use(unknownEndpoint)
+app.use(errorHandler)
+
+app.get('/info', (request, res) => {
+  res.send(`
 	<div>
 		<p>Phonebook has info for ${phonebook.length} people</p>
 		<p>${new Date()}</p>
 	</div>`)
 })
 
-app.get('/api/persons/:id', (request, response) => {
-  const id = request.params.id
-  const person = phonebook.find(p => p.id == id)
-  if (note) {
-    response.json(person)
-  } else {
-    response.status(404).end()
-  }
+app.get('/api/persons/:id', (req, res, next) => {
+  const id = req.params._id
+	Phone.findById(id).then(phone => {
+		phone ? res.json(phone) : res.status(404).end()
+	}).catch(e => next(e))
 })
 
 app.delete('/api/persons/:id', (req, res) => {
-	const id = req.params.id
-	phonebook = phonebook.filter(p => p.id != id)
-
-  response.status(204).end()
+	const id = req.params._id
+	Phone.findByIdAndRemove(id).then(phone => {
+    res.status(204).end()
+  }).catch(error => next(error))
 })
 
 app.post('/api/persons', (req, res) => {
 	const body = req.body
-
-	if(phonebook.find(p => p.name === body.name.trim())){
-		return res.status(400).json({
+  console.log(body)
+	Phone.findOne({name : body.name.trim()}).then(
+		phone => {
+			if(phone){
+				return res.status(400).json({
 			error: 'name should be unique'
 		})
-	}
-
-	if (!body.name || !body.number) {
-    return res.status(400).json({ 
-      error: 'number or name is missing' 
-    })
-  }
-
-  const person = {
+			} else if(!body.name || !body.number) {
+				return res.status(400).json({ 
+					error: 'number or name is missing' 
+				})
+			}
+		
+		const person = new Phone({
     name: body.name,
     number: body.number,
     id: Math.floor(Math.random() * 5959),
-  }
-
-  phonebook = phonebook.concat(person)
+  })
+		console.log(person)
+	person.save().then(newPerson => {
+    res.json(newPerson)
+  })
 
   res.json(person)
+		} 
+		
+		
+		
+	)
+	
+
+  
+})
+app.put('/api/persons/:id', (req, res, next) => {
+  const body = req.body
+
+  const num = {
+    name: body.name,
+    number: body.number,
+		id: body.id,
+  }
+
+  Phone.findByIdAndUpdate(req.params.id, num, { new: true })
+    .then(updatedNumber => {
+      res.json(updatedNumber)
+    })
+    .catch(error => next(error))
 })
 
-const PORT = 3001
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`)
-})
+module.exports = app;
