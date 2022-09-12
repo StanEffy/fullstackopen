@@ -6,9 +6,7 @@ const mongoose = require('mongoose')
 const Phone = require('./schema/phone')
 const errorHandler = require('./error-handler')
 
-const unknownEndpoint = (request, response) => {
-  response.status(404).send({ error: 'unknown endpoint' })
-}
+
 
 app.use(cors())
 app.use(express.json())
@@ -31,8 +29,7 @@ app.get('/api/persons', (request, res) => {
 	})
 })
 
-app.use(unknownEndpoint)
-app.use(errorHandler)
+
 
 app.get('/info', (request, res) => {
   res.send(`
@@ -43,14 +40,15 @@ app.get('/info', (request, res) => {
 })
 
 app.get('/api/persons/:id', (req, res, next) => {
-  const id = req.params._id
+  const id = req.params.id
 	Phone.findById(id).then(phone => {
 		phone ? res.json(phone) : res.status(404).end()
 	}).catch(e => next(e))
 })
 
 app.delete('/api/persons/:id', (req, res) => {
-	const id = req.params._id
+	const id = req.params.id
+
 	Phone.findByIdAndRemove(id).then(phone => {
     res.status(204).end()
   }).catch(error => next(error))
@@ -74,7 +72,7 @@ app.post('/api/persons', (req, res) => {
 		const person = new Phone({
     name: body.name,
     number: body.number,
-    id: Math.floor(Math.random() * 5959),
+
   })
 		console.log(person)
 	person.save().then(newPerson => {
@@ -106,5 +104,11 @@ app.put('/api/persons/:id', (req, res, next) => {
     })
     .catch(error => next(error))
 })
+const unknownEndpoint = (request, response) => {
+  response.status(404).send({ error: 'unknown endpoint' })
+}
+
+app.use(unknownEndpoint)
+app.use(errorHandler)
 
 module.exports = app;
