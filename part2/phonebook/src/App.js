@@ -31,7 +31,7 @@ const App = () => {
 	const handleDelete = (id) => {
 		deleteNumber(id)
 			.then((res) => {
-				setPersons((prev) => [...prev.filter((p) => p.id !== id)])
+				setPersons((prev) => [...prev.filter((p) => p._id !== id)])
 				handleNotification("success", `User was succesfully deleted!`)
 			})
 			.catch((e) => {
@@ -43,13 +43,13 @@ const App = () => {
 	}
 
 	const confirmNewNum = (newPerson, persons) => {
-		const { id } = persons.find((p) => p.name === newPerson.name)
+		const { _id } = persons.find((p) => p.name === newPerson.name)
 		confirm(
 			`${newPerson.name} is already added to phonebook, replace the old number`
 		)
-			? updateNumber(id, newPerson).then((res) =>
+			? updateNumber(_id, newPerson).then((res) =>
 					setPersons((prev) => [
-						...prev.filter((n) => n.id !== id),
+						...prev.filter((n) => n._id !== _id),
 						newPerson,
 					])
 			  )
@@ -64,16 +64,22 @@ const App = () => {
 		}
 
 		!persons.find((p) => p.name === newPerson.name)
-			? addNumber(newPerson).then((response) => {
-					if (response.name === newPerson.name) {
-						setPersons((prev) => [...prev, response])
-						handleNotification(
-							"success",
-							`User ${response.name} was succesfully added!`
-						)
-					}
-					alert("Something went wrong")
-			  })
+			? addNumber(newPerson)
+					.then((response) => {
+						if (response.name === newPerson.name) {
+							setPersons((prev) => [...prev, response])
+							handleNotification(
+								"success",
+								`User ${response.name} was succesfully added!`
+							)
+						} else alert("Something went wrong")
+					})
+					.catch((e) =>
+						setNotification({
+							message: e.response.data.error,
+							type: "error",
+						})
+					)
 			: confirmNewNum(newPerson, persons)
 	}
 

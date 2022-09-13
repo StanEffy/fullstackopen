@@ -1,6 +1,6 @@
 import axios from "axios"
 
-export const api = axios.create({ baseURL: "http://localhost:3005/numbers" })
+export const api = axios.create({ baseURL: "http://localhost:3001/api/persons" })
 
 export const getNumbers = () => api.get("/").then((res) => res.data)
 
