@@ -7,6 +7,9 @@ const blogRouter = require("./controllers/blog")
 const mongoose = require("mongoose")
 const logger = require("./utils/logger")
 const config = require("./utils/config")
+const usersRouter = require("./controllers/users")
+const loginRouter = require("./controllers/login")
+
 
 mongoose.connect(config.DB)
     .then(() => {
@@ -26,6 +29,8 @@ app.use(
     morgan(":method :url :status :res[content-length] - :response-time ms :body")
 )
 app.use("/api/blogs", blogRouter)
+app.use("/api/users", usersRouter)
+app.use("/api/login", loginRouter)
 
 app.use(unknownEndpoint)
 app.use(errorHandler)
