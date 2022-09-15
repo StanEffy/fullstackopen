@@ -4,6 +4,17 @@ const morgan = require("morgan")
 const cors = require("cors")
 const {errorHandler, unknownEndpoint} = require("./utils/middleware")
 const blogRouter = require("./controllers/blog")
+const mongoose = require("mongoose")
+const logger = require("./utils/logger")
+const config = require("./utils/config")
+
+mongoose.connect(config.DB)
+    .then(() => {
+        logger.info("connected to MongoDB")
+    })
+    .catch((error) => {
+        logger.error("error connecting to MongoDB:", error.message)
+    })
 
 app.use(cors())
 app.use(express.json())

@@ -1,9 +1,9 @@
-const mongoose = require("mongoose")
 const app = require("./index.js")
+const http = require("http")
 const config = require("./utils/config.js")
 
-mongoose.connect(config.DB).then(() => console.log("DB connection successful!"))
+const server = http.createServer(app)
 
-app.listen(config.PORT, () => {
+server.listen(config.PORT, () => {
     console.log(`Server running on port ${config.PORT}`)
 })

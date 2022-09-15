@@ -123,7 +123,6 @@ describe("return correct values of the most popular blog", () => {
 
     test("when list has only many blogs, counts correctly", () => {
         const result = mostPopular(multiBlog)
-        console.log(result)
         expect(result).toEqual({
             title: "Go To Statement Considered Harmful3",
             author: "Edsger W. Dijkstra",

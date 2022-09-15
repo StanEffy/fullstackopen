@@ -4,7 +4,7 @@ dotenv.config({path: "./config.env"})
 
 const PORT = process.env.PORT
 
-const DB = process.env.DATABASE.replace("password", process.env.PASSWORD)
+const DB = process.env.DATABASE
 
 module.exports = {
     PORT,
