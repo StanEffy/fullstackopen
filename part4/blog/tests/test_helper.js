@@ -25,7 +25,8 @@ const nonExistingId = async () => {
 }
 
 const blogsInDb = async () => {
-    return await Blog.find({})
+    const res =  await Blog.find({})
+    return res
 
 }
 

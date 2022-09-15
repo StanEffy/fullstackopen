@@ -62,16 +62,22 @@ test("a valid blogpost can be added", async () => {
 })
 
 test("an existant blog can be found by id and deteled", async () => {
-    const {body} = await api.get("/api/blogs")
-
-    const {_id} = body[body.length-1]
+    const blogs = await helper.blogsInDb()
+    console.log(blogs)
+    const blogToDelete  = blogs[blogs.length-1]
 
     await api
-        .delete(`/api/blogs/${_id}`)
+        .delete(`/api/blogs/${blogToDelete._id}`)
         .expect(204)
+    const blogsAtEnd = await helper.blogsInDb()
 
+    expect(blogsAtEnd).toHaveLength(
+        helper.initialBlogs.length - 1
+    )
 
-    expect(body).toHaveLength(helper.initialBlogs.length)
+    const contents = blogsAtEnd.map(r => r.title)
+
+    expect(contents).not.toContain(blogToDelete.title)
 })
 
 test("blogpost without content is not added", async () => {
@@ -86,6 +92,21 @@ test("blogpost without content is not added", async () => {
     const blogsAtEnd = await helper.blogsInDb()
 
     expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length)
+})
+
+test("specific blogpost can be viewed", async () => {
+    const blogsAtStart = await helper.blogsInDb()
+
+    const blogToView = blogsAtStart[0]
+
+    const resultBlog = await api
+        .get(`/api/blogs/${blogToView._id}`)
+        .expect(200)
+        .expect("Content-Type", /application\/json/)
+
+    const processedBlogToView = JSON.parse(JSON.stringify(blogToView))
+
+    expect(resultBlog.body).toEqual(processedBlogToView)
 })
 
 afterAll(() => {
