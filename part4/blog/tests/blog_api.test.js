@@ -32,7 +32,7 @@ test("there are two blogs", async () => {
 
 test("the first note is about HTTP methods", async () => {
     const response = await api.get("/api/blogs")
-    expect(response.body[0].author).toBe("John Smith")
+    expect(response.body[0].author).toBe("Nick Vachovski")
 })
 
 test("a valid blogpost can be added", async () => {
@@ -67,7 +67,7 @@ test("an existant blog can be found by id and deteled", async () => {
     const blogToDelete  = blogs[blogs.length-1]
 
     await api
-        .delete(`/api/blogs/${blogToDelete._id}`)
+        .delete(`/api/blogs/${blogToDelete.id}`)
         .expect(204)
     const blogsAtEnd = await helper.blogsInDb()
 
@@ -100,7 +100,7 @@ test("specific blogpost can be viewed", async () => {
     const blogToView = blogsAtStart[0]
 
     const resultBlog = await api
-        .get(`/api/blogs/${blogToView._id}`)
+        .get(`/api/blogs/${blogToView.id}`)
         .expect(200)
         .expect("Content-Type", /application\/json/)
 

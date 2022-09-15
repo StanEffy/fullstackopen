@@ -47,8 +47,6 @@ blogRouter.delete("/:id", async (request, response, next) => {
     } catch (exception) {
         next(exception)
     }
-
-
 })
 
 module.exports = blogRouter

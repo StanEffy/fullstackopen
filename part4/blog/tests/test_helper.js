@@ -2,16 +2,18 @@ const Blog = require("../schema/blog")
 
 const initialBlogs = [
     {
-        title: "Title",
-        author: "John Smith",
-        url: "google.com",
-        likes:7
+        "title": "Germ",
+        "author": "Nick Vachovski",
+        "url": "google.com",
+        "likes": 32,
+        "id": "63231b8586c0911fed5f05d9"
     },
     {
-        title: "Title2",
-        author: "John Doe",
-        url: "google.com",
-        likes: 17
+        "title": "Germ 2",
+        "author": "Nick Vachovski",
+        "url": "google.com",
+        "likes": 32,
+        "id": "63231b8586c0911fed5f05d9"
     }
 ]
 
