@@ -33,8 +33,6 @@ describe("viewing a specific blogpost", () => {
     test("fails with statuscode 404 if blogpost does not exist", async () => {
         const validNonexistingId = await helper.nonExistingId()
 
-        console.log(validNonexistingId)
-
         await api
             .get(`/api/blogs/${validNonexistingId}`)
             .expect(404)
@@ -148,7 +146,34 @@ describe("check format of a created blogposts", () => {
 
     })
 })
+describe("update a blogpost", () => {
+    test("blogpost updated if reached by id", async () => {
+        const blogs = await helper.blogsInDb()
 
+        const blogToUpdate  = blogs[blogs.length-1]
+        const updatedBlog = {...blogToUpdate, title: "Completely new title"}
+        await api
+            .put(`/api/blogs/${blogToUpdate.id}`)
+            .send(updatedBlog)
+            .expect(204)
+
+        const blogsUpdated = await helper.blogsInDb()
+
+        const newPost = blogsUpdated.find(b => b.id === blogToUpdate.id)
+
+        expect(newPost.title).toEqual("Completely new title")
+        expect(blogsUpdated).toHaveLength(helper.initialBlogs.length)
+    })
+
+    test("if blogpost's id doesn't exist you get 404", async () => {
+        const validNonexistingId = await helper.nonExistingId()
+        const updatedBlog = {}
+        await api
+            .put(`/api/blogs/${validNonexistingId}`)
+            .send(updatedBlog)
+            .expect(404)
+    })
+})
 afterAll(() => {
     mongoose.disconnect()
 })
