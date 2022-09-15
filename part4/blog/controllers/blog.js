@@ -3,7 +3,7 @@ const Blog = require("../schema/blog")
 
 blogRouter.get("/", async (request, response) => {
     const blogs = await Blog.find({})
-    response.json(blogs)
+    response.json(blogs.map(blog => blog.toJSON()))
 })
 
 blogRouter.post("/", async (request, response, next) => {
@@ -13,12 +13,12 @@ blogRouter.post("/", async (request, response, next) => {
         title: body.title,
         author: body.author,
         url: body.url,
-        likes: body.likes
+        likes: body.likes ? body.likes : 0
     })
 
     try {
-        const savedBlog = await blog.save()
-        response.status(201).json(savedBlog)
+        const saved = await blog.save()
+        response.status(201).json(saved.toJSON())
     } catch(exception) {
         next(exception)
     }

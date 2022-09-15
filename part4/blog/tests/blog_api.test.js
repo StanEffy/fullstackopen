@@ -8,105 +8,145 @@ const api = supertest(app)
 
 beforeEach(async () => {
     await Blog.deleteMany({})
-
-    let noteObject = new Blog(helper.initialBlogs[0])
-    await noteObject.save()
-
-    noteObject = new Blog(helper.initialBlogs[1])
-    await noteObject.save()
+    await Blog.insertMany(helper.initialBlogs)
 })
 
+describe("when there is initially soma blogs saved", () => {
+    test("blogs are returned as json", async () => {
+        await api
+            .get("/api/blogs")
+            .expect(200)
+            .expect("Content-Type", /application\/json/)
+    })
+    test("there are two blogs", async () => {
+        const response = await api.get("/api/blogs")
 
-test("blogs are returned as json", async () => {
-    await api
-        .get("/api/blogs")
-        .expect(200)
-        .expect("Content-Type", /application\/json/)
+        expect(response.body).toHaveLength(helper.initialBlogs.length)
+    })
+    test("the first note is about HTTP methods", async () => {
+        const response = await api.get("/api/blogs")
+        expect(response.body[0].author).toBe("Nick Vachovski")
+    })
 })
 
-test("there are two blogs", async () => {
-    const response = await api.get("/api/blogs")
+describe("viewing a specific blogpost", () => {
+    test("fails with statuscode 404 if blogpost does not exist", async () => {
+        const validNonexistingId = await helper.nonExistingId()
 
-    expect(response.body).toHaveLength(helper.initialBlogs.length)
+        console.log(validNonexistingId)
+
+        await api
+            .get(`/api/blogs/${validNonexistingId}`)
+            .expect(404)
+    })
+
+    test("fails with statuscode 400 id is invalid", async () => {
+        const invalidId = "554"
+
+        await api
+            .get(`/api/blogs/${invalidId}`)
+            .expect(400)
+    })
+    test("specific blogpost can be viewed", async () => {
+        const blogsAtStart = await helper.blogsInDb()
+
+        const blogToView = blogsAtStart[0]
+
+        const resultBlog = await api
+            .get(`/api/blogs/${blogToView.id}`)
+            .expect(200)
+            .expect("Content-Type", /application\/json/)
+
+        const processedBlogToView = JSON.parse(JSON.stringify(blogToView))
+
+        expect(resultBlog.body).toEqual(processedBlogToView)
+    })
+})
+describe("addition a new blogpost", () => {
+    test("a valid blogpost can be added", async () => {
+        const newNote = {
+            title: "Title test add",
+            author: "Sam",
+            url: "google.com",
+            likes: 7
+        }
+
+        await api
+            .post("/api/blogs")
+            .send(newNote)
+            .expect(201)
+            .expect("Content-Type", /application\/json/)
+
+        const blogsAtEnd = await helper.blogsInDb()
+        expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length + 1)
+
+        const contents = blogsAtEnd.map(b => b.title)
+        const response = await api.get("/api/blogs")
+
+        expect(response.body).toHaveLength(helper.initialBlogs.length + 1)
+        expect(contents).toContain(
+            "Title test add"
+        )
+    })
+
+    test("if blogpost has no likes field, than field is created with 0 value", async () => {
+        const newNote = {
+            title: "Title test add 2",
+            author: "Sam",
+            url: "google.com",
+        }
+
+        const savedNote = await api
+            .post("/api/blogs")
+            .send(newNote)
+
+        expect(savedNote._body.likes).toEqual(0)
+    })
+
+    test("blogpost without content is not added", async () => {
+        const newBlog= {
+            title: "Just a title"
+        }
+        await api
+            .post("/api/blogs")
+            .send(newBlog)
+            .expect(400)
+
+        const blogsAtEnd = await helper.blogsInDb()
+
+        expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length)
+    })
+})
+describe("deletion of a blogpost", () => {
+
+    test("an existant blog can be found by id and deteled", async () => {
+        const blogs = await helper.blogsInDb()
+        console.log(blogs)
+        const blogToDelete  = blogs[blogs.length-1]
+
+        await api
+            .delete(`/api/blogs/${blogToDelete.id}`)
+            .expect(204)
+        const blogsAtEnd = await helper.blogsInDb()
+
+        expect(blogsAtEnd).toHaveLength(
+            helper.initialBlogs.length - 1
+        )
+
+        const contents = blogsAtEnd.map(r => r.title)
+
+        expect(contents).not.toContain(blogToDelete.title)
+    })
 })
 
-test("the first note is about HTTP methods", async () => {
-    const response = await api.get("/api/blogs")
-    expect(response.body[0].author).toBe("Nick Vachovski")
-})
+describe("check format of a created blogposts", () => {
+    test("expect id field to be defined and _id to be undefined", async () => {
+        const blogsAtStart = await helper.blogsInDb()
 
-test("a valid blogpost can be added", async () => {
-    const newNote = {
-        title: "Title test add",
-        author: "Sam",
-        url: "google.com",
-        likes: 7
-    }
+        expect(blogsAtStart[0].id).toBeDefined()
+        expect(blogsAtStart[0]._id).toBe(undefined)
 
-    await api
-        .post("/api/blogs")
-        .send(newNote)
-        .expect(201)
-        .expect("Content-Type", /application\/json/)
-
-    const blogsAtEnd = await helper.blogsInDb()
-    expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length + 1)
-
-    const contents = blogsAtEnd.map(b => b.title)
-    const response = await api.get("/api/blogs")
-
-    expect(response.body).toHaveLength(helper.initialBlogs.length + 1)
-    expect(contents).toContain(
-        "Title test add"
-    )
-})
-
-test("an existant blog can be found by id and deteled", async () => {
-    const blogs = await helper.blogsInDb()
-    console.log(blogs)
-    const blogToDelete  = blogs[blogs.length-1]
-
-    await api
-        .delete(`/api/blogs/${blogToDelete.id}`)
-        .expect(204)
-    const blogsAtEnd = await helper.blogsInDb()
-
-    expect(blogsAtEnd).toHaveLength(
-        helper.initialBlogs.length - 1
-    )
-
-    const contents = blogsAtEnd.map(r => r.title)
-
-    expect(contents).not.toContain(blogToDelete.title)
-})
-
-test("blogpost without content is not added", async () => {
-    const newBlog= {
-        title: "Just a title"
-    }
-    await api
-        .post("/api/blogs")
-        .send(newBlog)
-        .expect(400)
-
-    const blogsAtEnd = await helper.blogsInDb()
-
-    expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length)
-})
-
-test("specific blogpost can be viewed", async () => {
-    const blogsAtStart = await helper.blogsInDb()
-
-    const blogToView = blogsAtStart[0]
-
-    const resultBlog = await api
-        .get(`/api/blogs/${blogToView.id}`)
-        .expect(200)
-        .expect("Content-Type", /application\/json/)
-
-    const processedBlogToView = JSON.parse(JSON.stringify(blogToView))
-
-    expect(resultBlog.body).toEqual(processedBlogToView)
+    })
 })
 
 afterAll(() => {
