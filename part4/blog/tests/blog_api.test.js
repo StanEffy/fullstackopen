@@ -11,6 +11,7 @@ beforeEach(async () => {
     await Blog.insertMany(helper.initialBlogs)
 })
 
+
 describe("when there is initially soma blogs saved", () => {
     test("blogs are returned as json", async () => {
         await api
@@ -30,11 +31,12 @@ describe("when there is initially soma blogs saved", () => {
 })
 
 describe("viewing a specific blogpost", () => {
+
     test("fails with statuscode 404 if blogpost does not exist", async () => {
-        const validNonexistingId = await helper.nonExistingId()
+        const validNonExistingId = await helper.nonExistingId()
 
         await api
-            .get(`/api/blogs/${validNonexistingId}`)
+            .get(`/api/blogs/${validNonExistingId}`)
             .expect(404)
     })
 
@@ -61,6 +63,28 @@ describe("viewing a specific blogpost", () => {
     })
 })
 describe("addition a new blogpost", () => {
+    let headers
+
+    beforeEach(async() => {
+        const newUser = {
+            username: "user",
+            name: "user",
+            password: "password",
+        }
+
+        await api
+            .post("/api/users")
+            .send(newUser)
+
+        const result = await api
+            .post("/api/login")
+            .send(newUser)
+
+        headers = {
+            "Authorization": `bearer ${result.body.token}`
+        }
+    })
+
     test("a valid blogpost can be added", async () => {
         const newNote = {
             title: "Title test add",
@@ -73,6 +97,7 @@ describe("addition a new blogpost", () => {
             .post("/api/blogs")
             .send(newNote)
             .expect(201)
+            .set(headers)
             .expect("Content-Type", /application\/json/)
 
         const blogsAtEnd = await helper.blogsInDb()
@@ -97,6 +122,7 @@ describe("addition a new blogpost", () => {
         const savedNote = await api
             .post("/api/blogs")
             .send(newNote)
+            .set(headers)
 
         expect(savedNote._body.likes).toEqual(0)
     })
@@ -108,6 +134,7 @@ describe("addition a new blogpost", () => {
         await api
             .post("/api/blogs")
             .send(newBlog)
+            .set(headers)
             .expect(400)
 
         const blogsAtEnd = await helper.blogsInDb()
@@ -115,65 +142,108 @@ describe("addition a new blogpost", () => {
         expect(blogsAtEnd).toHaveLength(helper.initialBlogs.length)
     })
 })
-describe("deletion of a blogpost", () => {
-
-    test("an existant blog can be found by id and deteled", async () => {
-        const blogs = await helper.blogsInDb()
-        console.log(blogs)
-        const blogToDelete  = blogs[blogs.length-1]
-
-        await api
-            .delete(`/api/blogs/${blogToDelete.id}`)
-            .expect(204)
-        const blogsAtEnd = await helper.blogsInDb()
-
-        expect(blogsAtEnd).toHaveLength(
-            helper.initialBlogs.length - 1
-        )
-
-        const contents = blogsAtEnd.map(r => r.title)
-
-        expect(contents).not.toContain(blogToDelete.title)
-    })
-})
-
-describe("check format of a created blogposts", () => {
-    test("expect id field to be defined and _id to be undefined", async () => {
-        const blogsAtStart = await helper.blogsInDb()
-
-        expect(blogsAtStart[0].id).toBeDefined()
-        expect(blogsAtStart[0]._id).toBe(undefined)
-
-    })
-})
-describe("update a blogpost", () => {
-    test("blogpost updated if reached by id", async () => {
-        const blogs = await helper.blogsInDb()
-
-        const blogToUpdate  = blogs[blogs.length-1]
-        const updatedBlog = {...blogToUpdate, title: "Completely new title"}
-        await api
-            .put(`/api/blogs/${blogToUpdate.id}`)
-            .send(updatedBlog)
-            .expect(204)
-
-        const blogsUpdated = await helper.blogsInDb()
-
-        const newPost = blogsUpdated.find(b => b.id === blogToUpdate.id)
-
-        expect(newPost.title).toEqual("Completely new title")
-        expect(blogsUpdated).toHaveLength(helper.initialBlogs.length)
-    })
-
-    test("if blogpost's id doesn't exist you get 404", async () => {
-        const validNonexistingId = await helper.nonExistingId()
-        const updatedBlog = {}
-        await api
-            .put(`/api/blogs/${validNonexistingId}`)
-            .send(updatedBlog)
-            .expect(404)
-    })
-})
+// describe("deletion of a blogpost", () => {
+//     let headers
+//
+//     beforeEach(async() => {
+//         const newUser = {
+//             username: "user",
+//             name: "user",
+//             password: "password",
+//         }
+//
+//         await api
+//             .post("/api/users")
+//             .send(newUser)
+//
+//         const result = await api
+//             .post("/api/login")
+//             .send(newUser)
+//
+//         headers = {
+//             "Authorization": `bearer ${result.body.token}`
+//         }
+//     })
+//     test("an existant blog can be found by id and deteled", async () => {
+//         const blogs = await helper.blogsInDb()
+//         const blogToDelete  = blogs[blogs.length-1]
+//
+//         await api
+//             .delete(`/api/blogs/${blogToDelete.id}`)
+//             .expect(204)
+//             .set(headers)
+//         const blogsAtEnd = await helper.blogsInDb()
+//
+//         expect(blogsAtEnd).toHaveLength(
+//             helper.initialBlogs.length - 1
+//         )
+//
+//         const contents = blogsAtEnd.map(r => r.title)
+//
+//         expect(contents).not.toContain(blogToDelete.title)
+//     })
+// })
+//
+// describe("check format of a created blogposts", () => {
+//     test("expect id field to be defined and _id to be undefined", async () => {
+//         const blogsAtStart = await helper.blogsInDb()
+//
+//         expect(blogsAtStart[0].id).toBeDefined()
+//         expect(blogsAtStart[0]._id).toBe(undefined)
+//
+//     })
+// })
+// describe("update a blogpost", () => {
+//     let headers
+//
+//     beforeEach(async() => {
+//         const newUser = {
+//             username: "user",
+//             name: "user",
+//             password: "password",
+//         }
+//
+//         await api
+//             .post("/api/users")
+//             .send(newUser)
+//
+//         const result = await api
+//             .post("/api/login")
+//             .send(newUser)
+//
+//         headers = {
+//             "Authorization": `bearer ${result.body.token}`
+//         }
+//     })
+//     test("blogpost updated if reached by id", async () => {
+//         const blogs = await helper.blogsInDb()
+//
+//         const blogToUpdate  = blogs[blogs.length-1]
+//         const updatedBlog = {...blogToUpdate, title: "Completely new title"}
+//         await api
+//             .put(`/api/blogs/${blogToUpdate.id}`)
+//             .send(updatedBlog)
+//             .expect(204)
+//             .set(headers)
+//
+//         const blogsUpdated = await helper.blogsInDb()
+//
+//         const newPost = blogsUpdated.find(b => b.id === blogToUpdate.id)
+//
+//         expect(newPost.title).toEqual("Completely new title")
+//         expect(blogsUpdated).toHaveLength(helper.initialBlogs.length)
+//     })
+//
+//     test("if blogpost's id doesn't exist you get 404", async () => {
+//         const validNonexistingId = await helper.nonExistingId()
+//         const updatedBlog = {}
+//         await api
+//             .put(`/api/blogs/${validNonexistingId}`)
+//             .send(updatedBlog)
+//             .expect(404)
+//             .set(headers)
+//     })
+// })
 afterAll(() => {
     mongoose.disconnect()
 })

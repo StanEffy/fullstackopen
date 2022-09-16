@@ -1,15 +1,6 @@
 const blogRouter = require("express").Router()
 const Blog = require("../schema/blog")
-const User = require("../schema/user")
-const jwt = require("jsonwebtoken")
-
-const getTokenFrom = request => {
-    const authorization = request.get("authorization")
-    if (authorization && authorization.toLowerCase().startsWith("bearer ")) {
-        return authorization.substring(7)
-    }
-    return null
-}
+const middleware = require("../utils/middleware")
 
 
 blogRouter.get("/", async (request, response) => {
@@ -17,14 +8,10 @@ blogRouter.get("/", async (request, response) => {
     response.json(blogs.map(blog => blog.toJSON()))
 })
 
-blogRouter.post("/", async (request, response, next) => {
+blogRouter.post("/", middleware.userExtractor, async (request, response, next) => {
     const body = await request.body
-    const token = getTokenFrom(request)
-    const decodedToken = jwt.verify(token, process.env.SECRET)
-    if (!decodedToken.id) {
-        return response.status(401).json({ error: "token missing or invalid" })
-    }
-    const user = await User.findById(decodedToken.id)
+
+    const user = request.user
 
     const blog = new Blog({
         title: body.title,
@@ -58,20 +45,25 @@ blogRouter.get("/:id", async (request, response, next) => {
         next(exception)
     }
 })
-blogRouter.put("/:id", async (request, response, next) => {
+blogRouter.put("/:id", middleware.userExtractor, async (request, response, next) => {
     try {
         const blog = await Blog.findById(request.params.id)
         const body = request.body
+
+        const user = request.user
 
         const updated = {
             title: body.title,
             author: body.author,
             url: body.url,
             likes: body.likes,
+            user: user._id
         }
 
         if (blog) {
             const updatedBlog = await Blog.findByIdAndUpdate(request.params.id, updated, { new: true })
+            user.blogs = user.blogs.concat(updatedBlog._id)
+            await user.save()
             response.status(204).json(updatedBlog.toJSON())
         } else {
             response.status(404).end()
@@ -81,10 +73,15 @@ blogRouter.put("/:id", async (request, response, next) => {
     }
 })
 
-blogRouter.delete("/:id", async (request, response, next) => {
+blogRouter.delete("/:id", middleware.userExtractor, async (request, response, next) => {
     try {
         const id =  request.params.id
+
         const result = await Blog.findByIdAndDelete(id)
+        const user = request.user
+        user.blogs = user.blogs.filter(b => b.id !== id )
+        await user.save()
+
         response.status(204).json(result)
     } catch (exception) {
         next(exception)
