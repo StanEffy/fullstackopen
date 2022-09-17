@@ -15,7 +15,9 @@ const App = () => {
   const [notification, setNotification] = useState(null);
 
   useEffect(() => {
-    blogService.getAll().then((blogs) => setBlogs(blogs));
+    blogService
+      .getAll()
+      .then((blogs) => setBlogs(blogs.sort((a, b) => b.likes - a.likes)));
   }, []);
 
   useEffect(() => {
@@ -85,7 +87,7 @@ const App = () => {
         />
       ) : (
         <>
-          <BlogForm setNotification={setNotification} />
+          <BlogForm setNotification={setNotification} setBlogs={setBlogs} />
           <BlogList blogs={blogs} setNotification={setNotification} />
         </>
       )}
