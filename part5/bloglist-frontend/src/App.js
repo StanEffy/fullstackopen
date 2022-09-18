@@ -88,7 +88,11 @@ const App = () => {
       ) : (
         <>
           <BlogForm setNotification={setNotification} setBlogs={setBlogs} />
-          <BlogList blogs={blogs} setNotification={setNotification} />
+          <BlogList
+            blogs={blogs}
+            setNotification={setNotification}
+            setBlogs={setBlogs}
+          />
         </>
       )}
     </div>
