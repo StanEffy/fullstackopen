@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import blogService from "../../services/blogs";
+import PropTypes from "prop-types";
 
 const BlogForm = ({ setNotification, setBlogs }) => {
   const [visible, setVisibility] = useState(false);
@@ -84,5 +85,8 @@ const BlogForm = ({ setNotification, setBlogs }) => {
     </>
   );
 };
-
+BlogForm.propTypes = {
+  setNotification: PropTypes.func,
+  setBlogs: PropTypes.func,
+};
 export default BlogForm;

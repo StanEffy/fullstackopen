@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 
 // eslint-disable-next-line react/prop-types
 const LoginForm = ({
@@ -32,5 +33,11 @@ const LoginForm = ({
     </form>
   );
 };
-
+LoginForm.propTypes = {
+  username: PropTypes.string,
+  password: PropTypes.string,
+  handleLogin: PropTypes.func,
+  setPassword: PropTypes.func,
+  setUsername: PropTypes.func,
+};
 export default LoginForm;

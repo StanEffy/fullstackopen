@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import blogService from "../services/blogs";
+import PropTypes from "prop-types";
 
-const Blog = ({ blog, setBlogs }) => {
+const Blog = ({ blog, setBlogs, setNotification }) => {
   const [detailsVisibility, setDetailsVisibility] = useState(false);
   const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this post")) {
@@ -9,7 +10,7 @@ const Blog = ({ blog, setBlogs }) => {
         await blogService.deletePost(id);
         setBlogs((prev) => prev.filter((b) => b.id !== id));
       } catch (e) {
-        console.log(e);
+        setNotification({ type: "error", message: e.response.data.error });
       }
     }
   };
@@ -28,7 +29,7 @@ const Blog = ({ blog, setBlogs }) => {
         })
       );
     } catch (e) {
-      console.log(e);
+      setNotification({ type: "error", message: e.response.data.error });
     }
   };
   return (
@@ -57,5 +58,14 @@ const Blog = ({ blog, setBlogs }) => {
     </li>
   );
 };
-
+Blog.propTypes = {
+  blog: {
+    likes: PropTypes.number,
+    url: PropTypes.string,
+    author: PropTypes.string,
+    id: PropTypes.string,
+  },
+  setBlogs: PropTypes.func,
+  setNotification: PropTypes.func,
+};
 export default Blog;
