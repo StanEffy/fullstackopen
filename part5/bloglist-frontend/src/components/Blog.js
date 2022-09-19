@@ -33,10 +33,14 @@ const Blog = ({ blog, setBlogs, setNotification }) => {
     }
   };
   return (
-    <li style={{ border: "1px solid black", padding: "5px" }}>
+    <li
+      style={{ border: "1px solid black", padding: "5px" }}
+      className={"blog-unit"}
+    >
       <div>
         <div>
-          {blog.title} {blog.author}
+          <span>{blog.title}</span>
+          <span>{blog.author}</span>
         </div>
         {!detailsVisibility ? (
           <button onClick={() => setDetailsVisibility(true)}>view</button>
@@ -44,9 +48,9 @@ const Blog = ({ blog, setBlogs, setNotification }) => {
       </div>
       {detailsVisibility ? (
         <div>
-          <div>{blog.url}</div>
+          <div className={"blog-url"}>{blog.url}</div>
           <div>
-            <span>likes {blog.likes}</span>
+            <span className={"blog-likes"}>likes {blog.likes}</span>
             <button onClick={() => handleLike(blog)}>like!</button>
           </div>
           <button onClick={() => setDetailsVisibility(false)}>hide</button>
@@ -59,12 +63,13 @@ const Blog = ({ blog, setBlogs, setNotification }) => {
   );
 };
 Blog.propTypes = {
-  blog: {
+  blog: PropTypes.shape({
     likes: PropTypes.number,
     url: PropTypes.string,
     author: PropTypes.string,
     id: PropTypes.string,
-  },
+    title: PropTypes.string,
+  }),
   setBlogs: PropTypes.func,
   setNotification: PropTypes.func,
 };

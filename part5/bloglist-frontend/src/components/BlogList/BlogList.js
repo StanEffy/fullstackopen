@@ -7,7 +7,7 @@ const BlogList = ({ blogs = [], setNotification, setBlogs }) => {
   return (
     <div>
       <h2>blogs</h2>
-      <ul>
+      <ul className={"blog-list"}>
         {blogs.map((blog) => (
           <Blog
             key={blog.id}
