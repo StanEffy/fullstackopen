@@ -62,9 +62,10 @@ blogRouter.put("/:id", middleware.userExtractor, async (request, response, next)
 
         if (blog) {
             const updatedBlog = await Blog.findByIdAndUpdate(request.params.id, updated, { new: true })
-            user.blogs = user.blogs.concat(updatedBlog._id)
+
+            user.blogs = [...user.blogs.filter(b => b !== request.params.id), updatedBlog._id]
             await user.save()
-            response.status(204).json(updatedBlog.toJSON())
+            response.status(201).json(updatedBlog.toJSON())
         } else {
             response.status(404).end()
         }
