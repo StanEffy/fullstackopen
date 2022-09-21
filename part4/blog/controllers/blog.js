@@ -1,6 +1,7 @@
 const blogRouter = require("express").Router()
 const Blog = require("../schema/blog")
 const middleware = require("../utils/middleware")
+const {info} = require("../utils/logger")
 
 
 blogRouter.get("/", async (request, response) => {
@@ -51,7 +52,7 @@ blogRouter.put("/:id", middleware.userExtractor, async (request, response, next)
         const body = request.body
 
         const user = request.user
-
+        console.log("User is " + user)
         const updated = {
             title: body.title,
             author: body.author,
@@ -63,7 +64,6 @@ blogRouter.put("/:id", middleware.userExtractor, async (request, response, next)
         if (blog) {
             const updatedBlog = await Blog.findByIdAndUpdate(request.params.id, updated, { new: true })
 
-            user.blogs = [...user.blogs.filter(b => b !== request.params.id), updatedBlog._id]
             await user.save()
             response.status(201).json(updatedBlog.toJSON())
         } else {
@@ -78,8 +78,15 @@ blogRouter.delete("/:id", middleware.userExtractor, async (request, response, ne
     try {
         const id =  request.params.id
 
-        const result = await Blog.findByIdAndDelete(id)
+        const result = await Blog.findById(id)
         const user = request.user
+        if ( result.user && result.user.toString() !== user.id ) {
+            return response.status(401).json({
+                error: "only the creator can delete a blog"
+            })
+        }
+
+        await Blog.findByIdAndRemove(request.params.id)
         user.blogs = user.blogs.filter(b => b.id !== id )
         await user.save()
 
