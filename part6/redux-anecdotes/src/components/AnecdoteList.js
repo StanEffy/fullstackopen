@@ -5,8 +5,9 @@ import {voteForAnec} from "../actionCreators/action-creators";
 const AnecdoteList = () => {
     const anecdotes = useSelector(state => state)
     const [sortedAnecs, setSortedAnecs] = useState([...anecdotes])
+    
     useEffect(() => {
-        setSortedAnecs(anecdotes.sort((a,b) => b.votes - a.votes))
+        setSortedAnecs([...anecdotes].sort((a,b) => b.votes - a.votes))
     }, [anecdotes])
     const dispatch = useDispatch()
 

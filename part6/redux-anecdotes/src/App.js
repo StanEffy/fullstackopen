@@ -1,6 +1,4 @@
-import { useSelector, useDispatch } from 'react-redux'
-import {useEffect, useState} from "react";
-import {voteForAnec} from "./actionCreators/action-creators";
+
 import AnecdotesForm from "./components/AnecdotesForm";
 import AnecdoteList from "./components/AnecdoteList";
 

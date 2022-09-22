@@ -1,2 +1,2 @@
-export const addNewAnecdote = payload => ({type: "ADD", payload})
-export const voteForAnec = payload => ({type: "VOTE", payload })
+export const addNewAnecdote = payload => dispatch => dispatch({type: "anecdotes/addAnecdote", payload})
+export const voteForAnec = payload => dispatch => dispatch({type: "anecdotes/voteFor", payload })
