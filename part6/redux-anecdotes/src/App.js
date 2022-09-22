@@ -1,5 +1,5 @@
 import { useSelector, useDispatch } from 'react-redux'
-import {useEffect, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 
 const App = () => {
   const anecdotes = useSelector(state => state)
@@ -12,7 +12,15 @@ const App = () => {
   const vote = (id) => {
     dispatch({type: "VOTE", payload: id})
   }
-
+  const add = (anecdote) => {
+      dispatch({type: "ADD", payload: anecdote})
+  }
+    const anec = useRef()
+    
+    const handleAdd = (e) => {
+      e.preventDefault()
+        add(anec.current.value)
+}
   return (
     <div>
       <h2>Anecdotes</h2>
@@ -29,8 +37,8 @@ const App = () => {
       )}
       <h2>create new</h2>
       <form>
-        <div><input /></div>
-        <button>create</button>
+        <div><input ref={anec}/></div>
+        <button onClick={(e) => handleAdd(e)}>create</button>
       </form>
     </div>
   )
