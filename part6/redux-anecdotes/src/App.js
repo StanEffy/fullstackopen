@@ -1,17 +1,22 @@
 import { useSelector, useDispatch } from 'react-redux'
+import {useEffect, useState} from "react";
 
 const App = () => {
   const anecdotes = useSelector(state => state)
+    const [sortedAnecs, setSortedAnecs] = useState([...anecdotes])
+    useEffect(() => {
+        setSortedAnecs(anecdotes.sort((a,b) => b.votes - a.votes))
+    }, [anecdotes])
   const dispatch = useDispatch()
 
   const vote = (id) => {
-    console.log('vote', id)
+    dispatch({type: "VOTE", payload: id})
   }
 
   return (
     <div>
       <h2>Anecdotes</h2>
-      {anecdotes.map(anecdote =>
+      {sortedAnecs.map(anecdote =>
         <div key={anecdote.id}>
           <div>
             {anecdote.content}
