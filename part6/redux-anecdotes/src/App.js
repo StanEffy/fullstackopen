@@ -1,5 +1,6 @@
 import { useSelector, useDispatch } from 'react-redux'
 import {useEffect, useRef, useState} from "react";
+import {addNewAnecdote, voteForAnec} from "./actionCreators/action-creators";
 
 const App = () => {
   const anecdotes = useSelector(state => state)
@@ -10,17 +11,20 @@ const App = () => {
   const dispatch = useDispatch()
 
   const vote = (id) => {
-    dispatch({type: "VOTE", payload: id})
+    dispatch(voteForAnec(id))
   }
   const add = (anecdote) => {
-      dispatch({type: "ADD", payload: anecdote})
+      dispatch(addNewAnecdote(anecdote))
   }
     const anec = useRef()
-    
+
     const handleAdd = (e) => {
       e.preventDefault()
         add(anec.current.value)
+        anec.current.value = ""
 }
+
+
   return (
     <div>
       <h2>Anecdotes</h2>
