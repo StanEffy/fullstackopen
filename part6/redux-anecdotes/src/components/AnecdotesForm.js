@@ -1,13 +1,17 @@
 import React, {useRef} from 'react';
-import {addNewAnecdote} from "../actionCreators/action-creators";
 import { useDispatch } from 'react-redux'
+import {addNewAnec} from "../reducers/anecdoteReducer";
+
+const getId = () => (100000 * Math.random()).toFixed(0)
 
 const AnecdotesForm = () => {
     const dispatch = useDispatch()
 
-    const add = (anecdote) => {
-        dispatch(addNewAnecdote(anecdote))
+    const add = async (anecdote) => {
+        const obj = {content: anecdote, id: getId(), votes: 0}
+        dispatch(addNewAnec(obj))
     }
+
     const anec = useRef()
 
     const handleAdd = (e) => {

@@ -1,5 +1,6 @@
 export const addNewAnecdote = payload => dispatch => dispatch({type: "anecdotes/addAnecdote", payload})
 export const voteForAnec = payload => dispatch => dispatch({type: "anecdotes/voteFor", payload })
+export const setAllAnecs = payload => dispatch => dispatch({type: "anecdotes/setAllAnecdotes", payload })
 
 export const setFilter = payload=> dispatch => dispatch({type: "filter/setFilter", payload})
 //notification action creators
