@@ -3,9 +3,9 @@ import {useDispatch, useSelector} from "react-redux";
 import {voteForAnec} from "../actionCreators/action-creators";
 
 const AnecdoteList = () => {
-    const anecdotes = useSelector(state => state)
+    const anecdotes = useSelector(state => state.anecdotes)
     const [sortedAnecs, setSortedAnecs] = useState([...anecdotes])
-    
+
     useEffect(() => {
         setSortedAnecs([...anecdotes].sort((a,b) => b.votes - a.votes))
     }, [anecdotes])
