@@ -4,4 +4,4 @@ export const voteForAnec = payload => dispatch => dispatch({type: "anecdotes/vot
 //notification action creators
 
 export const setNewNotification = payload => dispatch => dispatch({type: "notification/setNotification", payload})
-export const setNullNotification = dispatch => dispatch({type: "notification/nullifyNotification"})
+export const setNullNotification = () => dispatch => dispatch({type: "notification/nullifyNotification"})
