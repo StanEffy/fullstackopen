@@ -6,10 +6,12 @@ const AnecdoteList = () => {
     const anecdotes = useSelector(state => state.anecdotes)
     const [sortedAnecs, setSortedAnecs] = useState([...anecdotes])
     const notification = useSelector(state => state.notification)
+    const filter = useSelector(state => state.filter)
+    console.log("filter is ", filter)
 
     useEffect(() => {
-        setSortedAnecs([...anecdotes].sort((a,b) => b.votes - a.votes))
-    }, [anecdotes])
+        setSortedAnecs([...anecdotes].filter(a => a.content.includes(filter)).sort((a,b) => b.votes - a.votes))
+    }, [anecdotes, filter])
     const dispatch = useDispatch()
 
     useEffect(() => {
