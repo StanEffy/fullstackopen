@@ -1,11 +1,11 @@
-import {useDispatch} from "react-redux";
+import {connect} from "react-redux";
 import {setFilter} from "../actionCreators/action-creators";
 
-const Filter = () => {
-    const dispatch = useDispatch()
+const Filter = (props) => {
+
     const handleChange = (e) => {
         e.preventDefault()
-        dispatch(setFilter((e.target.value).trim()))
+        props.setFilter((e.target.value).trim())
     }
     const style = {
         marginBottom: 10
@@ -17,5 +17,10 @@ const Filter = () => {
         </div>
     )
 }
-
-export default Filter
+const mapStateToProps = () => {
+}
+const mapDispatchToProps = {
+    setFilter
+}
+export default connect(mapStateToProps,
+    mapDispatchToProps)(Filter)

@@ -1,12 +1,7 @@
-import {useSelector} from "react-redux";
-import {useEffect} from "react";
+import {connect} from "react-redux";
 
-const Notification = () => {
+const Notification = ({notification}) => {
 
-  const notification = useSelector(state => state.notification)
-  useEffect(() => {
-
-  }, [notification])
   const style = {
     border: 'solid',
     borderColor: notification.type === "success" ? "green" : "red",
@@ -25,4 +20,13 @@ const Notification = () => {
   )
 }
 
-export default Notification
+const mapStateToProps = (state) => {
+  return {
+    notification: state.notification
+  }
+}
+const mapDispatchToProps = {
+
+}
+export default connect(mapStateToProps,
+    mapDispatchToProps)(Notification)

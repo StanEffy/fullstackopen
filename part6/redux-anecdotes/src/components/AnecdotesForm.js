@@ -1,15 +1,14 @@
 import React, {useRef} from 'react';
-import { useDispatch } from 'react-redux'
+import {connect} from 'react-redux'
 import {addNewAnec} from "../reducers/anecdoteReducer";
 
 const getId = () => (100000 * Math.random()).toFixed(0)
 
-const AnecdotesForm = () => {
-    const dispatch = useDispatch()
+const AnecdotesForm = (props) => {
 
-    const add = async (anecdote) => {
+    const add = (anecdote) => {
         const obj = {content: anecdote, id: getId(), votes: 0}
-        dispatch(addNewAnec(obj))
+        props.addNewAnec(obj)
     }
 
     const anec = useRef()
@@ -30,5 +29,9 @@ const AnecdotesForm = () => {
 
     );
 };
-
-export default AnecdotesForm;
+const mapStateToProps = () => {
+}
+const mapDispatchToProps = {
+    addNewAnec
+}
+export default connect(mapStateToProps, mapDispatchToProps)(AnecdotesForm);
