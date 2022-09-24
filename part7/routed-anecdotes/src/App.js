@@ -4,6 +4,11 @@ import AnecdoteList from "./AnecdotesList";
 import About from "./About";
 import CreateNew from "./CreateNew";
 import Footer from "./Footer";
+import {
+  BrowserRouter as Router,
+  Routes, Route, Link
+} from "react-router-dom"
+import SingleAnec from "./SingleAnec";
 
 const App = () => {
   const [anecdotes, setAnecdotes] = useState([
@@ -26,7 +31,7 @@ const App = () => {
   const [notification, setNotification] = useState('')
 
   const addNew = (anecdote) => {
-    anecdote.id = Math.round(Math.random() * 10000)
+
     setAnecdotes(anecdotes.concat(anecdote))
   }
 
@@ -46,12 +51,19 @@ const App = () => {
 
   return (
     <div>
+      <Router>
       <h1>Software anecdotes</h1>
       <Menu />
-      <AnecdoteList anecdotes={anecdotes} />
-      <About />
-      <CreateNew addNew={addNew} />
-      <Footer />
+      <Routes>
+        <Route path={"/anecdotes"} element={<AnecdoteList anecdotes={anecdotes} />}/>
+        <Route path={"/anecdotes/:id"} element={<SingleAnec anecdotes={anecdotes}/>}/>
+        <Route path={"/create"} element={<CreateNew addNew={addNew} />}/>
+        <Route path={"/about"} element={<About />}/>
+      </Routes>
+
+
+
+      <Footer /></Router>
     </div>
   )
 }
