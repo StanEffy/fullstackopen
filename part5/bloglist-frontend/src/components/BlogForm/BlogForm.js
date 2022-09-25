@@ -43,6 +43,7 @@ const BlogForm = ({ setNotification, setBlogs }) => {
                   type="text"
                   value={blogpost.title}
                   name="title"
+                  id={"form-title"}
                   onChange={({ target }) =>
                     setBlogpost((prev) => ({ ...prev, title: target.value }))
                   }
@@ -56,6 +57,7 @@ const BlogForm = ({ setNotification, setBlogs }) => {
                   type="text"
                   value={blogpost.author}
                   name="author"
+                  id={"form-author"}
                   onChange={({ target }) =>
                     setBlogpost((prev) => ({ ...prev, author: target.value }))
                   }
@@ -69,13 +71,16 @@ const BlogForm = ({ setNotification, setBlogs }) => {
                   type="text"
                   value={blogpost.url}
                   name="url"
+                  id={"form-url"}
                   onChange={({ target }) =>
                     setBlogpost((prev) => ({ ...prev, url: target.value }))
                   }
                 />
               </label>
             </div>
-            <button onClick={(e) => handleSubmit(e)}>SEND NEW BLOGPOST</button>
+            <button id={"form-button-submit"} onClick={(e) => handleSubmit(e)}>
+              SEND NEW BLOGPOST
+            </button>
           </form>
           <button onClick={() => hideForm()}>cancel all this</button>
         </>

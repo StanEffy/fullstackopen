@@ -72,7 +72,7 @@ const App = () => {
       {user && (
         <>
           <div>
-            Well, <b>{user.username}</b> is definetely logged in{" "}
+            Well, <b>{user.username}</b> is definetely logged in
           </div>
           <button onClick={() => logout()}>logout</button>
         </>

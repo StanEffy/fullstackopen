@@ -40,7 +40,7 @@ const Blog = ({ blog, setBlogs, setNotification }) => {
       <div>
         <div>
           <span>{blog.title}</span>
-          <span>{blog.author}</span>
+          <span className={".blog-author"}>{blog.author}</span>
         </div>
         {!detailsVisibility ? (
           <button onClick={() => setDetailsVisibility(true)}>view</button>
@@ -51,10 +51,18 @@ const Blog = ({ blog, setBlogs, setNotification }) => {
           <div className={"blog-url"}>{blog.url}</div>
           <div>
             <span className={"blog-likes"}>likes {blog.likes}</span>
-            <button onClick={() => handleLike(blog)}>like!</button>
+            <button
+              className={"blog__like-button"}
+              onClick={() => handleLike(blog)}
+            >
+              like!
+            </button>
           </div>
           <button onClick={() => setDetailsVisibility(false)}>hide</button>
-          <button onClick={() => handleDelete(blog.id)}>
+          <button
+            className={"post-deletion-button"}
+            onClick={() => handleDelete(blog.id)}
+          >
             remove the blogpost
           </button>
         </div>
