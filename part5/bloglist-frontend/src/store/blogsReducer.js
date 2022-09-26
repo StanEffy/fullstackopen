@@ -15,7 +15,7 @@ const blogsSlice = createSlice({
 		},
 		voteForBlog(state, action) {
 			return state.map((b) =>
-				b.id == action.payload ? { ...b, votes: b.votes + 1 } : b
+				b.id == action.payload ? { ...b, likes: b.likes + 1 } : b
 			)
 		},
 		deleteBlog(state, action) {
@@ -33,8 +33,12 @@ export const initializeBlogs = () => {
 
 export const voteBlog = (blog) => {
 	return async (dispatch) => {
-		const res = await blogsService.updateBlogpost(blog.id, blog)
-		dispatch(voteForBlog(res.id))
+		const res = await blogsService.updateBlogpost(blog.id, {
+			...blog,
+			likes: blog.likes + 1,
+		})
+		console.log(res)
+		dispatch(voteForBlog(blog.id))
 	}
 }
 

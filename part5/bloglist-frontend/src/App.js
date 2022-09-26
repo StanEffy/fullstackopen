@@ -2,13 +2,15 @@ import { useState, useEffect } from "react"
 import React from "react"
 import blogService from "./services/blogs"
 import LoginForm from "./components/LoginForm/LoginForm"
-import loginService from "./services/login"
 import BlogForm from "./components/BlogForm/BlogForm"
 import Anouncement from "./components/Anouncement/Anouncement"
 import BlogList from "./components/BlogList/BlogList"
 import { useDispatch, useSelector } from "react-redux"
 import { initializeBlogs } from "./store/blogsReducer"
 import UsersView from "./components/UsersView/UsersView"
+import { dispatchLogout, dispatchUser } from "./store/usersReducer"
+import { Route, Routes } from "react-router-dom"
+import SingleUser from "./components/UsersView/SingleUser"
 
 const App = () => {
 	const dispatch = useDispatch()
@@ -19,40 +21,30 @@ const App = () => {
 
 	const blogs = useSelector((state) => state.blogs)
 	const blogsSorted = [...blogs].sort((a, b) => b.likes - a.likes)
+
 	const [username, setUsername] = useState("")
 	const [password, setPassword] = useState("")
-	const [user, setUser] = useState(null)
+	const user = useSelector((state) => state.user)
+
 	const [notification, setNotification] = useState(null)
 
 	useEffect(() => {}, [blogs])
 
 	useEffect(() => {
-		const loggedUserJSON = window.localStorage.getItem("loggedBlogAppUser")
-		if (loggedUserJSON) {
-			const user = JSON.parse(loggedUserJSON)
-			setUser(user)
+		if (user) {
 			blogService.setToken(user.token)
 		}
 	}, [])
 
 	const handleLogin = async (event) => {
 		event.preventDefault()
-
 		try {
-			const user = await loginService.login({
-				username,
-				password,
-			})
+			dispatch(dispatchUser({ username, password }))
 
-			window.localStorage.setItem(
-				"loggedBlogAppUser",
-				JSON.stringify(user)
-			)
-			blogService.setToken(user.token)
-			setUser(user)
 			setUsername("")
 			setPassword("")
 		} catch (exception) {
+			console.log(exception)
 			setNotification({
 				message: exception.response.data.error,
 				type: "error",
@@ -60,8 +52,7 @@ const App = () => {
 		}
 	}
 	const logout = () => {
-		window.localStorage.clear()
-		setUser(null)
+		dispatch(dispatchLogout())
 	}
 	useEffect(() => {
 		if (notification) {
@@ -85,7 +76,7 @@ const App = () => {
 			{user && (
 				<>
 					<div>
-						Well, <b>{user.username}</b> is definetely logged in
+						Well, <b>{user.username}</b> is definitely logged in
 					</div>
 					<button onClick={() => logout()}>logout</button>
 				</>
@@ -105,9 +96,12 @@ const App = () => {
 						blogs={blogsSorted}
 						setNotification={setNotification}
 					/>
+					<Routes>
+						<Route path={"/"} element={<UsersView />} />
+						<Route path={"/users/:id"} element={<SingleUser />} />
+					</Routes>
 				</>
 			)}
-			<UsersView />
 		</div>
 	)
 }

@@ -22,7 +22,8 @@
     "eslint-plugin-jest": "^27.0.4",
     "eslint-plugin-react": "^7.31.8",
     "jest-watch-typeahead": "^0.6.5",
-    "prettier": "2.7.1"
+    "prettier": "2.7.1",
+    "react-router-dom": "^6.4.1"
   },
   "scripts": {
     "start": "react-scripts start",

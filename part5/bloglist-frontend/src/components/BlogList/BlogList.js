@@ -3,7 +3,6 @@ import Blog from "../Blog"
 import PropTypes from "prop-types"
 
 const BlogList = ({ blogs = [], setNotification }) => {
-	console.log(blogs)
 	useEffect(() => {}, [blogs])
 	return (
 		<div>

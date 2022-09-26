@@ -25,6 +25,12 @@ export const setNotify = (notification) => {
 		)
 	}
 }
+
+export const nullifyNotificationD = () => {
+	return async (dispatch) => {
+		dispatch(nullifyNotification())
+	}
+}
 export const { nullifyNotification, setNotification } =
 	notificationSlice.actions
 

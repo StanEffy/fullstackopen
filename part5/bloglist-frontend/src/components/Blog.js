@@ -1,8 +1,8 @@
 import React, { useState } from "react"
-import blogService from "../services/blogs"
 import PropTypes from "prop-types"
 import { useDispatch } from "react-redux"
-import { deletePost } from "../store/blogsReducer"
+import { deletePost, voteBlog } from "../store/blogsReducer"
+import { setNotify } from "../store/notificationReducer"
 
 const Blog = ({ blog, setNotification }) => {
 	const dispatch = useDispatch()
@@ -12,7 +12,6 @@ const Blog = ({ blog, setNotification }) => {
 		if (window.confirm("Are you sure you want to delete this post")) {
 			try {
 				dispatch(deletePost(id))
-				// setBlogs((prev) => prev.filter((b) => b.id !== id));
 			} catch (e) {
 				setNotification({
 					type: "error",
@@ -23,13 +22,11 @@ const Blog = ({ blog, setNotification }) => {
 	}
 	const handleLike = async (blog) => {
 		try {
-			const res = await blogService.updateBlogpost(blog.id, {
-				...blog,
-				likes: blog.likes + 1,
-			})
-			console.log(res)
+			dispatch(voteBlog(blog))
 		} catch (e) {
-			setNotification({ type: "error", message: e.response.data.error })
+			dispatch(
+				setNotify({ type: "error", message: e.response.data.error })
+			)
 		}
 	}
 	return (
