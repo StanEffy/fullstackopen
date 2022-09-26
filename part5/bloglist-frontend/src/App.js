@@ -2,15 +2,17 @@ import { useState, useEffect } from "react"
 import React from "react"
 import blogService from "./services/blogs"
 import LoginForm from "./components/LoginForm/LoginForm"
-import BlogForm from "./components/BlogForm/BlogForm"
+
 import Anouncement from "./components/Anouncement/Anouncement"
-import BlogList from "./components/BlogList/BlogList"
+
 import { useDispatch, useSelector } from "react-redux"
 import { initializeBlogs } from "./store/blogsReducer"
-import UsersView from "./components/UsersView/UsersView"
+
 import { dispatchLogout, dispatchUser } from "./store/usersReducer"
-import { Route, Routes } from "react-router-dom"
-import SingleUser from "./components/UsersView/SingleUser"
+
+import { nullifyNotificationD, setNotify } from "./store/notificationReducer"
+import MainPage from "./components/MainPage"
+import Header from "./components/Header/Header"
 
 const App = () => {
 	const dispatch = useDispatch()
@@ -19,16 +21,11 @@ const App = () => {
 		dispatch(initializeBlogs())
 	}, [dispatch])
 
-	const blogs = useSelector((state) => state.blogs)
-	const blogsSorted = [...blogs].sort((a, b) => b.likes - a.likes)
-
 	const [username, setUsername] = useState("")
 	const [password, setPassword] = useState("")
 	const user = useSelector((state) => state.user)
 
-	const [notification, setNotification] = useState(null)
-
-	useEffect(() => {}, [blogs])
+	const notification = useSelector((state) => state.notification)
 
 	useEffect(() => {
 		if (user) {
@@ -40,15 +37,15 @@ const App = () => {
 		event.preventDefault()
 		try {
 			dispatch(dispatchUser({ username, password }))
-
 			setUsername("")
 			setPassword("")
 		} catch (exception) {
-			console.log(exception)
-			setNotification({
-				message: exception.response.data.error,
-				type: "error",
-			})
+			dispatch(
+				setNotify({
+					message: exception.response.data.error,
+					type: "error",
+				})
+			)
 		}
 	}
 	const logout = () => {
@@ -57,7 +54,7 @@ const App = () => {
 	useEffect(() => {
 		if (notification) {
 			const timeoutId = setTimeout(() => {
-				setNotification(null)
+				dispatch(nullifyNotificationD())
 			}, 4000)
 			return () => {
 				clearTimeout(timeoutId)
@@ -75,6 +72,7 @@ const App = () => {
 			) : null}
 			{user && (
 				<>
+					<Header />
 					<div>
 						Well, <b>{user.username}</b> is definitely logged in
 					</div>
@@ -90,17 +88,7 @@ const App = () => {
 					setUsername={setUsername}
 				/>
 			) : (
-				<>
-					<BlogForm setNotification={setNotification} />
-					<BlogList
-						blogs={blogsSorted}
-						setNotification={setNotification}
-					/>
-					<Routes>
-						<Route path={"/"} element={<UsersView />} />
-						<Route path={"/users/:id"} element={<SingleUser />} />
-					</Routes>
-				</>
+				<MainPage />
 			)}
 		</div>
 	)

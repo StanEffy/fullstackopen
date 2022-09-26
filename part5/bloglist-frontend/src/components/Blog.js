@@ -4,7 +4,7 @@ import { useDispatch } from "react-redux"
 import { deletePost, voteBlog } from "../store/blogsReducer"
 import { setNotify } from "../store/notificationReducer"
 
-const Blog = ({ blog, setNotification }) => {
+const Blog = ({ blog }) => {
 	const dispatch = useDispatch()
 
 	const [detailsVisibility, setDetailsVisibility] = useState(false)
@@ -13,10 +13,12 @@ const Blog = ({ blog, setNotification }) => {
 			try {
 				dispatch(deletePost(id))
 			} catch (e) {
-				setNotification({
-					type: "error",
-					message: e.response.data.error,
-				})
+				dispatch(
+					setNotify({
+						type: "error",
+						message: e.response.data.error,
+					})
+				)
 			}
 		}
 	}
@@ -79,6 +81,5 @@ Blog.propTypes = {
 		id: PropTypes.string,
 		title: PropTypes.string,
 	}),
-	setNotification: PropTypes.func,
 }
 export default Blog

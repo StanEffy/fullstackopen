@@ -1,5 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit"
 import blogsService from "../services/blogs"
+import { setNotify } from "./notificationReducer"
 
 const initialState = []
 
@@ -26,35 +27,50 @@ const blogsSlice = createSlice({
 
 export const initializeBlogs = () => {
 	return async (dispatch) => {
-		const blogs = await blogsService.getAll()
-		dispatch(setAllBlogs(blogs))
+		try {
+			const blogs = await blogsService.getAll()
+			dispatch(setAllBlogs(blogs))
+		} catch (e) {
+			dispatch(
+				setNotify({ message: e.response.data.error, type: "error" })
+			)
+		}
 	}
 }
 
 export const voteBlog = (blog) => {
 	return async (dispatch) => {
-		const res = await blogsService.updateBlogpost(blog.id, {
-			...blog,
-			likes: blog.likes + 1,
-		})
-		console.log(res)
-		dispatch(voteForBlog(blog.id))
+		try {
+			await blogsService.updateBlogpost(blog.id, {
+				...blog,
+				likes: blog.likes + 1,
+			})
+			dispatch(voteForBlog(blog.id))
+		} catch (e) {
+			dispatch(
+				setNotify({ message: e.response.data.error, type: "error" })
+			)
+		}
 	}
 }
 
 export const addNew = (blog) => {
 	return async (dispatch) => {
 		const res = await blogsService.createNewBlogpost(blog)
-		console.log(res)
-		dispatch(addBlog(blog))
+		dispatch(addBlog(res))
 	}
 }
 
 export const deletePost = (id) => {
 	return async (dispatch) => {
-		const res = await blogsService.deletePost(id)
-		console.log(res)
-		dispatch(deleteBlog(id))
+		try {
+			await blogsService.deletePost(id)
+			dispatch(deleteBlog(id))
+		} catch (e) {
+			dispatch(
+				setNotify({ message: e.response.data.error, type: "error" })
+			)
+		}
 	}
 }
 export const { setAllBlogs, voteForBlog, deleteBlog, addBlog } =

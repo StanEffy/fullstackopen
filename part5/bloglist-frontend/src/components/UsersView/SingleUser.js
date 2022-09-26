@@ -5,7 +5,7 @@ import { useSelector } from "react-redux"
 const SingleUser = () => {
 	const id = useParams().id
 	const navigate = useNavigate()
-	console.log(id)
+
 	const allPosts = useSelector((state) =>
 		state.blogs.filter((b) => b.user.id === id)
 	)
@@ -13,7 +13,11 @@ const SingleUser = () => {
 	return (
 		<div>
 			{allPosts.map((s) => (
-				<p key={"story_" + s.id}>{s.title}</p>
+				<p key={"story_" + s.id}>
+					<span>Author: {s.author} </span>
+					<span>Title: {s.title} </span>
+					<span>Likes: {s.likes} </span>
+				</p>
 			))}
 			<button onClick={() => navigate("/")}>back to all</button>
 		</div>
