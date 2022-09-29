@@ -26,20 +26,6 @@ let authors = [
     },
 ]
 
-/*
- * Suomi:
- * Saattaisi olla järkevämpää assosioida kirja ja sen tekijä tallettamalla kirjan yhteyteen tekijän nimen sijaan tekijän id
- * Yksinkertaisuuden vuoksi tallennamme kuitenkin kirjan yhteyteen tekijän nimen
- *
- * English:
- * It might make more sense to associate a book with its author by storing the author's id in the context of the book instead of the author's name
- * However, for simplicity, we will store the author's name in connection with the book
- *
- * Spanish:
- * Podría tener más sentido asociar un libro con su autor almacenando la id del autor en el contexto del libro en lugar del nombre del autor
- * Sin embargo, por simplicidad, almacenaremos el nombre del autor en conección con el libro
-*/
-
 let books = [
     {
         title: 'Clean Code',
@@ -84,7 +70,7 @@ let books = [
         genres: ['classic', 'crime']
     },
     {
-        title: 'The Demon ',
+        title: 'The Demon',
         published: 1872,
         author: 'Fyodor Dostoevsky',
         id: "afa5de04-344d-11e9-a414-719c6709cf3e",
@@ -96,43 +82,34 @@ const typeDefs = gql`
     type Query {
         bookCount: Int!
         authorCount: Int!
-        allBooks: [Book!]!
+        allBooks(author: String): [Book!]!
         allAuthors: [Author!]!
-    }
-    type Book {
-        title: String!
-        published: Int!
-        author: Author!
-        id: ID!
-        genres: [String]!
     }
     type Author {
         name: String!
         id: ID!
-        born: Int
+        born: Int,
+        bookCount: Int
+    }
+    type Book {
+        title: String!
+        published: Int!
+        author: String!
+        id: ID!
+        genres: [String]!
     }
 `
 
 const resolvers = {
     Query: {
-        bookCount: (author) => books.filter(b => b.author === author).length,
+        bookCount: () => books.filter(b => b.author === name).length,
         authorCount: () => authors.length,
-        allBooks: () => books,
         allAuthors: () => authors,
-        booksByAuthor: (root, args) => books.filter(b => b.author === args.name)
+        allBooks: (root, args) => books.filter(b => b.author === args.author)
     },
     Author: {
-        name: (root) => root.name,
-        id: (root) => root.id,
-        born: (root) => root.born,
+        bookCount: (root) => books.filter(b => b.author === root.name).length,
     },
-    Book: {
-        title:(root) => root.title,
-        published: (root) => root.published,
-        author: (root) => root.author,
-        id: (root) => root.id,
-        genres:(root) => root.genres,
-    }
 }
 
 const server = new ApolloServer({
