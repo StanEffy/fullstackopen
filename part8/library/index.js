@@ -119,13 +119,14 @@ const resolvers = {
         authorCount: () => authors.length,
         allAuthors: () => authors,
         allBooks: (root, args) => {
+            if(!args.author && !args.genre){
+                return books
+            }
             if(args.author){
                 return books.filter(b => b.author === args.author)
             } else if(args.genre){
                return books.filter(b => b.genres.includes(args.genre))
             }
-            return books
-
         }
     },
     Mutation: {
@@ -138,7 +139,7 @@ const resolvers = {
             return book
         },
         editAuthor: (root, args) => {
-            const author = {...authors.find(a => a.name === args.name), born: args.setBornTo}
+            const author = {...authors.find(a => a.name === args.name.trim()), born: args.setBornTo}
             authors = authors.map(a => a.name !== author.name ? a : author)
             return author
         },
