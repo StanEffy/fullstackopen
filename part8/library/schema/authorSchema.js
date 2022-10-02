@@ -4,7 +4,8 @@ const schema = new mongoose.Schema({
     name: {
         type: String,
         required: true,
-        minlength: 5
+        unique: true,
+        minlength: 4
     },
     born: {
         type: Number,
@@ -12,4 +13,4 @@ const schema = new mongoose.Schema({
     },
 })
 
-module.exports = mongoose.model('author', schema, 'authors')
+module.exports = mongoose.model('Author', schema, 'authors')

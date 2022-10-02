@@ -4,6 +4,7 @@ const schema = new mongoose.Schema({
     title: {
         type: String,
         required: true,
+        unique: true,
         minlength: 3
     },
     published: {
@@ -11,9 +12,8 @@ const schema = new mongoose.Schema({
         required: true
     },
     author: {
-        type: String,
-        required: true,
-        minlength: 5
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Author'
     },
     genres: {
         type: [String],
@@ -21,4 +21,4 @@ const schema = new mongoose.Schema({
     },
 })
 
-module.exports = mongoose.model('book', schema, 'books')
+module.exports = mongoose.model('Book', schema, 'books')
