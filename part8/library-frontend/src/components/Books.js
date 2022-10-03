@@ -1,25 +1,43 @@
-import { useQuery } from "@apollo/client";
+import { useLazyQuery, useQuery } from "@apollo/client";
 import { ALL_BOOKS } from "../queries";
 import { useEffect, useState } from "react";
 
 const Books = (props) => {
   const result = useQuery(ALL_BOOKS);
-  const [filter, setFilter] = useState("all");
-  const [booksF, setBooksF] = useState(result?.data?.allBooks);
 
-  const books = result?.data?.allBooks || [];
-  const genres = [...new Set(books.map((b) => b.genres).flat())];
+  const [booksByGenre, booksByGenreResult] = useLazyQuery(ALL_BOOKS, {
+    fetchPolicy: "no-cache",
+  });
+  const [filter, setFilter] = useState("all");
+  const [books, setBooks] = useState([]);
 
   useEffect(() => {
-    let booksFiltered = books.filter((b) =>
+    // eslint-disable-next-line no-unused-expressions
+    if (booksByGenreResult.data) {
+      setBooks(booksByGenreResult.data.allBooks);
+    }
+  }, [booksByGenreResult.data]);
+  const { allBooks } = result.data;
+  const genres = ["all", ...new Set(allBooks.map((b) => b.genres).flat())];
+
+  useEffect(() => {
+    let booksFiltered = allBooks.filter((b) =>
       filter === "all" ? b : b.genres.includes(filter)
     );
-    setBooksF(booksFiltered);
-  }, [filter]);
+    setBooks(booksFiltered);
+  }, [allBooks, filter]);
 
-  if (result.loading) {
+  if (allBooks.loading) {
     return <div>loading...</div>;
   }
+  const handleFilter = (filter) => {
+    setFilter(filter);
+    if (filter === "all") {
+      setBooks(allBooks);
+    } else {
+      booksByGenre({ variables: { genre: filter } });
+    }
+  };
   return (
     <div style={{ display: props.show ? "block" : "none" }}>
       <h2>books</h2>
@@ -31,7 +49,7 @@ const Books = (props) => {
             <th>author</th>
             <th>published</th>
           </tr>
-          {booksF.map((a) => (
+          {books.map((a) => (
             <tr key={a.title}>
               <td>{a.title}</td>
               <td>{a.author.name}</td>
@@ -40,9 +58,8 @@ const Books = (props) => {
           ))}
         </tbody>
       </table>
-      <button onClick={() => setFilter("all")}>all</button>
       {genres.map((g) => (
-        <button key={g} onClick={() => setFilter(g)}>
+        <button key={g} onClick={() => handleFilter(g)}>
           {g}
         </button>
       ))}
