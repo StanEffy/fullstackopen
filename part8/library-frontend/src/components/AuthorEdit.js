@@ -33,7 +33,7 @@ const AuthorEdit = ({ name, born, setError }) => {
 
   return (
     <form onSubmit={(e) => handleUpdate(e)}>
-      <h4>Edit existing author birthyear by clicking on the name</h4>
+      <h4>Edit existing author birth year by clicking on the name</h4>
       <label>
         name
         <input type="text" ref={name} readOnly={true} />
