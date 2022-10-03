@@ -1,79 +1,8 @@
-const { ApolloServer, UserInputError, gql, AuthenticationError} = require('apollo-server')
-const { v1: uuid } = require("uuid");
-const Book = require("./schema/bookSchema")
-const Author = require("./schema/authorSchema")
-const User = require("./schema/userSchema")
-const mongoose = require("mongoose")
-const jwt = require('jsonwebtoken')
-const JWT_SECRET = 'NEED_HERE_A_SECRET_KEY'
-
-
-const MONGODB_URI = "mongodb://localhost:27017/library"
-
-console.log('connecting to', MONGODB_URI)
-
-mongoose.connect(MONGODB_URI)
-    .then(() => {
-        console.log('connected to MongoDB')
-    })
-    .catch((error) => {
-        console.log('error connection to MongoDB:', error.message)
-    })
-
-
-const typeDefs = gql`
-    type Query {
-        bookCount: Int!
-        authorCount: Int!
-        allBooks(author: String, genre: String): [Book!]!
-        allAuthors: [Author!]!
-        me: User
-    }
-    type Mutation {
-        addBook(
-            title: String!
-            published: Int!
-            author: String!
-            genres: [String]!
-        ): Book,
-        
-        editAuthor(
-            name: String!
-            setBornTo: Int!
-        ): Author,
-        
-        createUser(
-            username: String!
-            favouriteGenre: String!
-        ): User
-        
-        login(
-            username: String!
-            password: String!
-        ): Token
-    }
-    type Author {
-        name: String!
-        id: ID!
-        born: Int,
-        bookCount: Int
-    }
-    type Book {
-        title: String!
-        published: Int!
-        author: Author!
-        id: ID!
-        genres: [String]!
-    }
-    type User {
-        username: String!
-        id: ID!,
-        favourites: String
-    }
-    type Token {
-        value: String!
-    }
-`
+const Book = require ("./schema/bookSchema");
+const {Author} = require( "./schema/authorSchema");
+const {AuthenticationError, UserInputError} = require("apollo-server") ;
+const {User} = require("./schema/userSchema") ;
+const {jwt} = require("jsonwebtoken") ;
 
 const resolvers = {
     Query: {
@@ -108,7 +37,9 @@ const resolvers = {
     },
     Mutation: {
         addBook: async(root, args, context) => {
+            console.log("THIS IS TRIGGERED!!!!!")
             if (!context.currentUser) {
+                console.log("IT HAPPENED!")
                 throw new AuthenticationError("not authenticated");
             }
             let author = await Author.findOne({ name: args.author });
@@ -131,15 +62,12 @@ const resolvers = {
             }
 
         },
-        editAuthor: async (root, args, context) => {
-            if (!context.currentUser) {
-                throw new AuthenticationError("not authenticated");
-            }
+        editAuthor: async (root, args) => {
+            console.log("TRIGGERED EDIT AUTHOR")
             const author = await Author.findOne({name: args.name})
-
             author.born = args.setBornTo
             try {
-               await author.save()
+                await author.save()
                 return author
             } catch (e) {
                 throw new UserInputError(e.message, {
@@ -159,7 +87,6 @@ const resolvers = {
         },
         login: async (root, args) => {
             const user = await User.findOne({ username: args.username })
-            console.log(args)
             if ( !user || args.password !== 'secret' ) {
                 throw new UserInputError("wrong credentials")
             }
@@ -177,23 +104,4 @@ const resolvers = {
         bookCount: async (root) => await Book.find({author: root.id}).countDocuments(),
     },
 }
-
-const server = new ApolloServer({
-    typeDefs,
-    resolvers,
-    context: async ({ req }) => {
-        console.log(req.headers.authorization)
-        const auth = req ? req.headers.authorization : null
-        if (auth && auth.toLowerCase().startsWith('bearer ')) {
-            const decodedToken = jwt.verify(
-                auth.substring(7), JWT_SECRET
-            )
-            const currentUser = await User.findById(decodedToken.id)
-            return { currentUser }
-        }
-    }
-})
-
-server.listen().then(({ url }) => {
-    console.log(`Server ready at ${url}`)
-}).catch(e => console.log(e))
+module.exports = resolvers
