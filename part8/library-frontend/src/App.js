@@ -7,6 +7,7 @@ import LoginForm from "./components/LoginForm";
 
 import Notify from "./components/Notify";
 import { ALL_AUTHORS, ALL_BOOKS } from "./queries";
+import RecommendGenre from "./components/RecommendGenre";
 
 const App = () => {
   const result = useQuery(ALL_BOOKS);
@@ -49,6 +50,7 @@ const App = () => {
         <button onClick={() => setPage("authors")}>authors</button>
         <button onClick={() => setPage("books")}>books</button>
         <button onClick={() => setPage("add")}>add book</button>
+        <button onClick={() => setPage("recommended")}>recommended</button>
       </div>
       <Notify errorMessage={errorMessage} />
       <button onClick={logout}>logout</button>
@@ -59,6 +61,10 @@ const App = () => {
       />
       <Books show={page === "books"} books={result.data.allBooks} />
       <NewBook show={page === "add"} setError={notify} />
+      <RecommendGenre
+        show={page === "recommended"}
+        books={result.data.allBooks}
+      />
     </div>
   );
 };
