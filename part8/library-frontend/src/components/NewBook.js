@@ -5,8 +5,12 @@ import { ADD_BOOK, ALL_AUTHORS, ALL_BOOKS } from "../queries";
 const NewBook = (props) => {
   const [addBook] = useMutation(ADD_BOOK, {
     refetchQueries: [{ query: ALL_BOOKS }, { query: ALL_AUTHORS }],
+    onError: (error) => {
+      error.graphQLErrors > 0
+        ? props.setError(error.graphQLErrors[0].message)
+        : props.setError(error.message);
+    },
   });
-
   const [title, setTitle] = useState("");
   const [author, setAuthor] = useState("");
   const [published, setPublished] = useState("");
@@ -23,7 +27,12 @@ const NewBook = (props) => {
     console.log("add book...");
 
     await addBook({
-      variables: { title, published: parseInt(published), author, genres },
+      variables: {
+        title,
+        published: parseInt(published),
+        author,
+        genres,
+      },
     });
 
     setTitle("");
