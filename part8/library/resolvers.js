@@ -1,8 +1,12 @@
 const Book = require ("./schema/bookSchema");
-const {Author} = require( "./schema/authorSchema");
+const Author = require( "./schema/authorSchema");
 const {AuthenticationError, UserInputError} = require("apollo-server") ;
-const {User} = require("./schema/userSchema") ;
-const {jwt} = require("jsonwebtoken") ;
+const User = require("./schema/userSchema") ;
+const jwt = require("jsonwebtoken") ;
+const { PubSub } = require('graphql-subscriptions')
+const pubsub = new PubSub()
+
+const JWT_SECRET = 'NEED_HERE_A_SECRET_KEY'
 
 const resolvers = {
     Query: {
@@ -37,11 +41,11 @@ const resolvers = {
     },
     Mutation: {
         addBook: async(root, args, context) => {
-            console.log("THIS IS TRIGGERED!!!!!")
+
             if (!context.currentUser) {
-                console.log("IT HAPPENED!")
                 throw new AuthenticationError("not authenticated");
             }
+
             let author = await Author.findOne({ name: args.author });
             if (!author) {
                 author = new Author({ name: args.author });
@@ -55,6 +59,10 @@ const resolvers = {
             try {
                 const book = new Book({...args, author: author.id})
                 await book.save()
+                console.log(book, author)
+                await pubsub.publish('BOOK_ADDED', { bookAdded: {...args, author} })
+
+                return book
             } catch (e) {
                 throw new UserInputError(e.message, {
                     invalidArgs: args,
@@ -86,22 +94,33 @@ const resolvers = {
                 })
         },
         login: async (root, args) => {
-            const user = await User.findOne({ username: args.username })
-            if ( !user || args.password !== 'secret' ) {
-                throw new UserInputError("wrong credentials")
+            try {
+
+                const user = await User.findOne({ username: args.username })
+                if ( !user || args.password !== 'secret' ) {
+                    throw new UserInputError("wrong credentials")
+                }
+
+                const userForToken = {
+                    username: user.username,
+                    id: user._id,
+                }
+
+                return { value: jwt.sign(userForToken, JWT_SECRET) }
+            } catch (e) {
+                console.log(e)
             }
 
-            const userForToken = {
-                username: user.username,
-                id: user._id,
-            }
-
-            return { value: jwt.sign(userForToken, JWT_SECRET) }
         },
 
     },
     Author: {
         bookCount: async (root) => await Book.find({author: root.id}).countDocuments(),
+    },
+    Subscription: {
+        bookAdded: {
+            subscribe: () => pubsub.asyncIterator(['BOOK_ADDED']),
+        },
     },
 }
 module.exports = resolvers

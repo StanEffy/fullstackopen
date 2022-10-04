@@ -1,6 +1,4 @@
-const {gql} = require ("apollo-server");
-
-const typeDefs = gql`
+const typeDefinitions = `
     type Query {
         bookCount: Int!
         authorCount: Int!
@@ -52,5 +50,8 @@ const typeDefs = gql`
     type Token {
         value: String!
     }
+    type Subscription {
+        bookAdded: Book!
+    }
 `
-module.exports = typeDefs
+module.exports = typeDefinitions
