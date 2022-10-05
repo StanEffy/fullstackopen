@@ -7,7 +7,7 @@ const errorHandler = require("./error-handler")
 
 app.use(cors())
 app.use(express.json())
- 
+
 morgan.token("body", (req) => {
     return JSON.stringify(req.body)
 })
