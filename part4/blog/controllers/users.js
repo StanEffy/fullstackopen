@@ -2,7 +2,7 @@ const bcrypt = require("bcrypt")
 const usersRouter = require("express").Router()
 const User = require("../schema/user")
 
-usersRouter.post("/", async (request, response) => {
+usersRouter.post("/", async (request, response, next) => {
     const { username, name, password } = request.body
 
     const existingUser = await User.findOne({ username })
@@ -26,7 +26,7 @@ usersRouter.post("/", async (request, response) => {
     response.status(201).json(savedUser)
 })
 
-usersRouter.get("/", async (request, response) => {
+usersRouter.get("/", async (request, response, next) => {
     const users = await User
         .find({}).populate("blogs")
     response.json(users)
