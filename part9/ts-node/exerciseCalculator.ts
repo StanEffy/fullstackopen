@@ -16,13 +16,13 @@ interface exerciseStatistics  {
     ratingDescription: rateDescription
 }
 
-const calculateExercises = (trainingsArray: number[], target: number):exerciseStatistics => {
+export const calculateExercises = (trainingsArray: number[], target: number):exerciseStatistics => {
 
     const calcRate = (days:number, trainingDays:number):rateDescription => {
-        const res = trainingDays / days
+        const res = trainingDays / days;
 
-        return res >= 0.7 ? "Not too bad but could be better" : res >= 0.5 ? "Pathetic" : "Dead possum could do better"
-    }
+        return res >= 0.7 ? "Not too bad but could be better" : res >= 0.5 ? "Pathetic" : "Dead possum could do better";
+    };
 
     return {
         days: trainingsArray.length,
@@ -32,8 +32,7 @@ const calculateExercises = (trainingsArray: number[], target: number):exerciseSt
         rating: 3,
         target: target,
         ratingDescription: calcRate(trainingsArray.length, trainingsArray.filter(t => t > 0).length)
-    }
+    };
 
-}
+};
 
-console.log(calculateExercises( process.argv[3].split(',').map(i => parseInt(i)), parseInt(process.argv[2])))

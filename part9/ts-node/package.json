@@ -24,6 +24,7 @@
     "typescript": "^4.8.4"
   },
   "dependencies": {
-    "express": "^4.18.1"
+    "express": "^4.18.1",
+    "readline-sync": "^1.4.10"
   }
 }
