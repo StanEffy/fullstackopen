@@ -1,5 +1,5 @@
-const calcBMI = (heightCM: number, massKG: number ) : string => {
-    const res = massKG / Math.pow(heightCM / 100, 2)
+export const calcBMI = (heightCM: number, massKG: number ) : string => {
+    const res = massKG / Math.pow(heightCM / 100, 2);
 
     switch (true){
         case (res < 16):
@@ -19,6 +19,6 @@ const calcBMI = (heightCM: number, massKG: number ) : string => {
         default:
             return "Obese (Class III)";
     }
-}
+};
 
-module.exports = calcBMI
+
