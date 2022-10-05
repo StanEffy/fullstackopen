@@ -6,6 +6,10 @@ import Filter from "./components/Filter";
 import { useDispatch } from 'react-redux'
 import { useEffect } from 'react'
 import {initializeAnecs} from "./reducers/anecdoteReducer";
+import {
+    BrowserRouter as Router,
+    Routes, Route, Link
+} from "react-router-dom"
 
 const App = () => {
     const dispatch = useDispatch()
@@ -16,11 +20,16 @@ const App = () => {
 
   return (
     <div>
-        <Notification />
-      <h2>Anecdotes</h2>
-        <AnecdoteList />
-        <Filter />
-      <AnecdotesForm />
+        <Router>
+            <Notification />
+            <Routes>
+                <Route path={"/"} element={<AnecdoteList />}/>
+                <Route path={"/form"} element={<AnecdotesForm /> }/>
+            </Routes>
+            <Filter />
+        </Router>
+
+
 
     </div>
   )

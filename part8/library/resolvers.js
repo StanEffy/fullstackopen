@@ -59,7 +59,7 @@ const resolvers = {
             try {
                 const book = new Book({...args, author: author.id})
                 await book.save()
-                console.log(book, author)
+
                 await pubsub.publish('BOOK_ADDED', { bookAdded: {...args, author} })
 
                 return book
