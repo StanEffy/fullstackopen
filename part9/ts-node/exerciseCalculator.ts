@@ -1,10 +1,8 @@
-// the number of days
-// the number of training days
-// the original target value
-// the calculated average time
-// boolean value describing if the target was reached
-// a rating between the numbers 1-3 that tells how well the hours are met. You can decide on the metric on your own.
-//     a text value explaining the rating
+// arguments should be given in an order target_number *one space and then numbers_of_hours_per_day, using comma
+// without any space
+// 2 1,0,0,4,2,7
+
+
 type rateDescription = "Dead possum could do better" | "Pathetic" | "Not too bad but could be better";
 type rating = 1 | 2 | 3;
 
@@ -38,4 +36,4 @@ const calculateExercises = (trainingsArray: number[], target: number):exerciseSt
 
 }
 
-console.log(calculateExercises( [0, 2, 6, 0, 2, 8], 2))
+console.log(calculateExercises( process.argv[3].split(',').map(i => parseInt(i)), parseInt(process.argv[2])))

@@ -20,4 +20,4 @@ const calcBMI = (heightCM: number, massKG: number ) : string => {
             return "Obese (Class III)";
     }
 }
-console.log(calcBMI(178, 70.2))
+console.log(calcBMI(parseInt(process.argv[2]), parseInt(process.argv[3])))
