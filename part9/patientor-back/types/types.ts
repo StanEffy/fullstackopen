@@ -1,13 +1,19 @@
 export type Diagnose = {
-    code: String,
-    name: String,
-    latin?: String
-}
+    code: string,
+    name: string,
+    latin?: string
+};
 export type Patient = {
-    id: String,
-    name: String,
-    dateOfBirth: String,
-    ssn: String,
-    gender: String,
-    occupation: String
+    id: string,
+    name: string,
+    dateOfBirth: string,
+    ssn: string,
+    gender: Gender,
+    occupation: string
+};
+
+enum Gender {
+    male = "male",
+    female = "female",
+    other = "other"
 }
