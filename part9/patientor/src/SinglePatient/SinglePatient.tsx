@@ -29,7 +29,7 @@ const SinglePatient = () => {
     }, []);
 
     if(patient === null) return null;
-    
+
     return (
         <div>
             <h2>{patient.name} <GetGenderLabel gender={patient.gender}/></h2>
