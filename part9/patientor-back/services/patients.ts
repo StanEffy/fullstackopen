@@ -1,25 +1,42 @@
 import patientsData from "../data/patients.json";
-import { Patient} from "../types/types";
+import {NewPatient, Patient, PublicPatient} from "../types/types";
 import { v1 as uuid } from 'uuid';
+import {makeNewPatientEntry} from "../utils/utils";
 
+const patientEntries: Patient[] = patientsData.map(p => {
+    const patient = makeNewPatientEntry(p) as Patient;
+    patient.id = p.id;
+    return patient;
+});
 
-const getEntries = ():Array<Patient> => {
-    return patientsData;
+const getEntries = ():Array<PublicPatient> => {
+    return patientEntries.map(({ id, name, dateOfBirth, gender, occupation, entries }) => ({
+        id,
+        name,
+        dateOfBirth,
+        gender,
+        occupation,
+        entries
+    }));
 };
-const getEntriesWithoutSSN = ():Omit<Patient, "ssn">[] => {
+const getEntriesWithoutSSN = ():PublicPatient[] => {
     return patientsData.map(({id, occupation, dateOfBirth, gender, name}) => ({
         id, occupation, dateOfBirth, gender, name
     }));
 };
 
-const addPatient = (patient: Omit<Patient, "id"> ):Patient => {
-    const newPatient:Patient = {...patient, id: uuid()};
-    patientsData.push(newPatient);
+const addPatient = (patient: NewPatient):PublicPatient => {
+    const newPatient = {...patient, id: uuid()};
+    patientEntries.push(newPatient);
     return newPatient;
+};
+const getOnePatient = (id:string):Patient | "Patient with such id does not exist" => {
+    return patientEntries.find(p => p.id === id) || "Patient with such id does not exist";
 };
 
 export default {
     getEntries,
     addPatient,
+    getOnePatient,
     getEntriesWithoutSSN
 };
