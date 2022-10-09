@@ -1,7 +1,7 @@
 import patientsData from "../data/patients.json";
 import {Entry, NewPatient, Patient, PublicPatient} from "../types/types";
 import { v1 as uuid } from 'uuid';
-import {makeNewPatientEntry} from "../utils/utils";
+import {AddEntryTo, makeNewPatientEntry} from "../utils/utils";
 
 const patientEntries: Patient[] = patientsData.map(p => {
     const patient = makeNewPatientEntry(p) as Patient;
@@ -34,9 +34,10 @@ const getOnePatient = (id:string):Patient | "Patient with such id does not exist
     return patientEntries.find(p => p.id === id) || "Patient with such id does not exist";
 };
 
-const addEntryToPatient = (id:string, entry: Entry):Patient | "Patient with such id does not exist" => {
+const addEntryToPatient = (id:string, entry: Omit<Entry, 'id'>):Patient | "Patient with such id does not exist" => {
     const patient = patientEntries.find(p => p.id === id);
-    patient ? patient.entries?.push(entry) : null;
+    const newEntry = AddEntryTo(entry);
+    patient ? patient.entries?.push(newEntry) : null;
     return  patient || "Patient with such id does not exist";
 };
 

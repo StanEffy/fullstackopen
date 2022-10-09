@@ -1,6 +1,6 @@
 import express from 'express';
 import patientsService from "../services/patients";
-import {Entry, Patient} from "../types/types";
+import { NewEntry, Patient} from "../types/types";
 import {isString} from "../utils/utils";
 
 interface TypedRequestBody<T> extends Express.Request {
@@ -32,10 +32,10 @@ router.post('/', (req:TypedRequestBody<Omit<Patient, "id">>, res) => {
     res.send(addPatient);
 });
 
-router.post(':id/entries', (req:TypedRequestBody<Entry>, res) => {
+router.post(':id/entries', (req:TypedRequestBody<NewEntry>, res) => {
     const id = req.params.id;
     const entry = req.body;
-    const addToPatient = patientsService.addEntryToPatient(id, entry);
+    const addToPatient = patientsService.getEntries().find(p => p.id === id);
     res.send(addToPatient);
 });
 
