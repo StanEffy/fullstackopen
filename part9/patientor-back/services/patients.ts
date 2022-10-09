@@ -1,5 +1,5 @@
 import patientsData from "../data/patients.json";
-import {NewPatient, Patient, PublicPatient} from "../types/types";
+import {Entry, NewPatient, Patient, PublicPatient} from "../types/types";
 import { v1 as uuid } from 'uuid';
 import {makeNewPatientEntry} from "../utils/utils";
 
@@ -34,9 +34,16 @@ const getOnePatient = (id:string):Patient | "Patient with such id does not exist
     return patientEntries.find(p => p.id === id) || "Patient with such id does not exist";
 };
 
+const addEntryToPatient = (id:string, entry: Entry):Patient | "Patient with such id does not exist" => {
+    const patient = patientEntries.find(p => p.id === id);
+    patient ? patient.entries?.push(entry) : null;
+    return  patient || "Patient with such id does not exist";
+};
+
 export default {
     getEntries,
     addPatient,
     getOnePatient,
-    getEntriesWithoutSSN
+    getEntriesWithoutSSN,
+    addEntryToPatient
 };
