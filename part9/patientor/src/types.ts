@@ -12,29 +12,32 @@ export enum HealthCheckRating {
   "HighRisk" = 2,
   "CriticalRisk" = 3
 }
-interface SickLeave {
+export interface SickLeave {
   startDate: string;
   endDate: string;
 }
-interface Discharge {
+export interface Discharge {
   date: string;
   criteria: string;
 }
 export interface HealthCheckEntry extends BaseEntry {
-  type: 'HealthCheck';
+  type: EntryType.HealthCheck;
   healthCheckRating: HealthCheckRating;
-
 }
 export interface OccupationalHealthcareEntry extends BaseEntry {
-  type: 'OccupationalHealthcare';
-  sickLeave?: SickLeave;
+  type: EntryType.OccupationalHealthcare;
+  sickLeave: SickLeave;
   employerName: string;
 }
-interface HospitalEntry extends BaseEntry {
-  type: 'Hospital';
+export interface HospitalEntry extends BaseEntry {
+  type: EntryType.Hospital;
   discharge: Discharge;
 }
-
+export enum EntryType {
+  OccupationalHealthcare = 'OccupationalHealthcare',
+  Hospital = 'Hospital',
+  HealthCheck = 'HealthCheck'
+}
 export type Entry =
     | HospitalEntry
     | OccupationalHealthcareEntry

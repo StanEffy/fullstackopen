@@ -36,7 +36,7 @@ export const addPatient = (patient: Patient) => ({
 
 export const updateEntryForPatient = (id: string, entry: Entry) => ({
   type: "UPDATE_ENTRY_FOR_PATIENT" as const,
-  payload: { entry, id },
+  payload: { id, entry },
 });
 
 export const reducer = (state: State, action: Action): State => {
