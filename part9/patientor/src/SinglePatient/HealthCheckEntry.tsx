@@ -23,7 +23,7 @@ export const HealthCheckEntryComponent = ({
     return (
     <Card style={{ width: "50rem", padding: "1rem" }}>
         <div style={{ display: "flex", alignItems: "center" }}>
-            <h4>{entry.date}</h4> <BloodtypeIcon/>
+            <h4>{entry.date}</h4> <BloodtypeIcon style={{color: "green"}}/>
         </div>
         <p>{entry.description}</p>
         <p>Diagnose by: {entry.specialist}</p>
