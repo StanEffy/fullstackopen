@@ -1,4 +1,4 @@
-import {Discharge, Entry, EntryType, Gender, HealthCheckRating, NewEntry, Patient, SickLeave} from "../types/types";
+import {Discharge, Entry, EntryType, Gender, HealthCheckRating, Patient, SickLeave} from "../types/types";
 import {v1 as uuid} from 'uuid';
 
 export const isString = (text: unknown): text is string => {
@@ -182,7 +182,7 @@ export const parseValidEntry = ({
     id?: string;
     date: unknown;
     specialist: unknown;
-    diagnosisCodes: unknown;
+    diagnosisCodes?: unknown;
     discharge?: unknown;
     employerName?: unknown;
     sickLeave?: unknown;

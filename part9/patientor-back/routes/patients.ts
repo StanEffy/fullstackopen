@@ -1,7 +1,7 @@
 import express from 'express';
-import patientsService from "../services/patients";
+import patientsService, {patientEntries} from "../services/patients";
 import { NewEntry, Patient} from "../types/types";
-import {isString} from "../utils/utils";
+import {isString, parseValidEntry} from "../utils/utils";
 
 interface TypedRequestBody<T> extends Express.Request {
     body: T,
@@ -33,10 +33,18 @@ router.post('/', (req:TypedRequestBody<Omit<Patient, "id">>, res) => {
 });
 
 router.post(':id/entries', (req:TypedRequestBody<NewEntry>, res) => {
-    const id = req.params.id;
-    const entry = req.body;
-    const addToPatient = patientsService.getEntries().find(p => p.id === id);
-    res.send(addToPatient);
+    try {
+        const id = req.params.id;
+        const entry = req.body;
+        const patientForEntry = patientEntries.find(p => p.id === id);
+        const parsedEntry = parseValidEntry(entry);
+        patientForEntry?.entries.push(parsedEntry);
+        res.send(patientForEntry);
+    } catch (e) {
+        res.send(e);
+    }
+
+
 });
 
 export default router;
