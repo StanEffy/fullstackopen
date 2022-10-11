@@ -30,7 +30,7 @@ const SinglePatient = () => {
     if(id === undefined) return null;
 
     const submitNewEntry = async (values: EntriesFormValues) => {
-
+        console.log(values);
         try {
             const parsedValues = parseValidEntry(values);
             const { data: newEntry } = await axios.post<Entry>(

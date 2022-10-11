@@ -35,7 +35,7 @@ export const addPatient = (patient: Patient) => ({
   payload: patient,
 });
 
-export const updateEntryForPatient = (id: string, entry: EntriesFormValues) => ({
+export const updateEntryForPatient = (id: string, entry: Entry) => ({
   type: "UPDATE_ENTRY_FOR_PATIENT" as const,
   payload: { id, entry },
 });

@@ -3,7 +3,7 @@ import {Button, Grid} from "@material-ui/core";
 import {Field, Form, Formik} from "formik";
 
 import {DiagnosisSelection, SelectField, TextField, TypeOption} from "./FormField";
-import {Entry, EntryType, HealthCheckRating, HospitalEntry} from "../types";
+import {BaseEntry, EntryType} from "../types";
 import {useStateValue} from "../state";
 import {Box} from "@mui/material";
 
@@ -11,7 +11,10 @@ import {Box} from "@mui/material";
  * use type Patient, but omit id and entries,
  * because those are irrelevant for new patient object.
  */
-export type EntriesFormValues = Omit<HospitalEntry, 'id' | 'discharge'>;
+export type EntriesFormValues = Omit<BaseEntry, 'id' | 'discharge'> & {
+    dischargeDate: string,
+    dischargeCriteria: string
+};
 
 interface Props {
   onSubmit: (values: EntriesFormValues) => void;
@@ -51,13 +54,8 @@ export const AddEntryForm = ({ onSubmit, onCancel }: Props) => {
           specialist: "",
           diagnosisCodes: undefined,
           type: EntryType.Hospital,
-          healthCheckRating: HealthCheckRating.Healthy,
-          employerName: "",
-          sickLeave_startDate: "",
-          sickLeave_endDate: "",
-          discharge_date: "",
-          discharge_criteria: ""
-
+          dischargeCriteria: "",
+          dischargeDate: ""
       }}
       onSubmit={onSubmit}
       validate={(values) => {
@@ -75,29 +73,35 @@ export const AddEntryForm = ({ onSubmit, onCancel }: Props) => {
         if (!values.diagnosisCodes) {
           errors.diagnosisCodes = requiredError;
         }
-        if(values.type === EntryType.HealthCheck){
-            if(!values.healthCheckRating){
-                errors.healthCheckRating = requiredError;
-            }
-        } else if(values.type === EntryType.Hospital){
-            if(!values.discharge_date ){
-                errors.discharge_date = requiredError;
-
-            }
-            if(!values.discharge_criteria){
-                errors.discharge_criteria = requiredError;
-            }
-          } else if(values.type === EntryType.OccupationalHealthcare){
-            if(!values.employerName){
-                errors.employerName = requiredError;
-            }
-            if(!values.sickLeave_startDate ){
-                errors.sickLeave_startDate = requiredError;
-            }
-            if( !values.sickLeave_endDate){
-                errors.sickLeave_endDate = requiredError;
-            }
-        }
+        if(!values.dischargeCriteria ){
+              errors.dischargeCriteria = requiredError;
+          }
+          if(!values.dischargeDate ){
+              errors.dischargeDate = requiredError;
+          }
+        // if(values.type === EntryType.HealthCheck){
+        //     if(!values.healthCheckRating){
+        //         errors.healthCheckRating = requiredError;
+        //     }
+        // } else if(values.type === EntryType.Hospital){
+        //
+        //
+        //
+        //
+        //
+        //
+        //
+        //   } else if(values.type === EntryType.OccupationalHealthcare){
+        //     if(!values.employerName){
+        //         errors.employerName = requiredError;
+        //     }
+        //     if(!values.sickLeave_startDate ){
+        //         errors.sickLeave_startDate = requiredError;
+        //     }
+        //     if( !values.sickLeave_endDate){
+        //         errors.sickLeave_endDate = requiredError;
+        //     }
+        // }
         return errors;
       }}
     >
@@ -128,14 +132,14 @@ export const AddEntryForm = ({ onSubmit, onCancel }: Props) => {
                   setFieldTouched={setFieldTouched}
                   diagnoses={Object.values(diagnoses)}
               />
-              {
-                  type === EntryType.HealthCheck ? <Field
-                      label="Healthcheck Rating (0 Healthy - 3 Near death)"
-                      placeholder="Healthcheck Rating "
-                      name="healthCheckRating"
-                      component={TextField}
-                  /> : null
-              }
+              {/*{*/}
+              {/*    type === EntryType.HealthCheck ? <Field*/}
+              {/*        label="Healthcheck Rating (0 Healthy - 3 Near death)"*/}
+              {/*        placeholder="Healthcheck Rating "*/}
+              {/*        name="healthCheckRating"*/}
+              {/*        component={TextField}*/}
+              {/*    /> : null*/}
+              {/*}*/}
 
               {
                   type === EntryType.Hospital ? (
@@ -145,13 +149,13 @@ export const AddEntryForm = ({ onSubmit, onCancel }: Props) => {
                               <Field
                                   label="Start date"
                                   placeholder="YYYY-MM-DD"
-                                  name="discharge_date"
+                                  name="dischargeDate"
                                   component={TextField}
                               />
                               <Field
                                   label="Criteria"
                                   placeholder="Criteria"
-                                  name="discharge_criteria"
+                                  name="dischargeCriteria"
                                   component={TextField}
                               />
                           </fieldset>
@@ -160,34 +164,34 @@ export const AddEntryForm = ({ onSubmit, onCancel }: Props) => {
                   ) : null
               }
 
-              {
-                  type === EntryType.OccupationalHealthcare ? (
-                      <>
-                          <Field
-                              label="Employer Name"
-                              placeholder="Employer Name"
-                              name="employerName"
-                              component={TextField}
-                          />
-                        <fieldset>
-                            <legend>Sick leave dates</legend>
-                            <Field
-                                label="Start date"
-                                placeholder="YYYY-MM-DD"
-                                name="sickLeave_startDate"
-                                component={TextField}
-                            />
-                            <Field
-                                label="End date"
-                                placeholder="YYYY-MM-DD"
-                                name="sickLeave_endDate"
-                                component={TextField}
-                            />
-                        </fieldset>
-                          <Box marginY={2}/>
-                      </>
-                      ) : null
-              }
+              {/*{*/}
+              {/*    type === EntryType.OccupationalHealthcare ? (*/}
+              {/*        <>*/}
+              {/*            <Field*/}
+              {/*                label="Employer Name"*/}
+              {/*                placeholder="Employer Name"*/}
+              {/*                name="employerName"*/}
+              {/*                component={TextField}*/}
+              {/*            />*/}
+              {/*          <fieldset>*/}
+              {/*              <legend>Sick leave dates</legend>*/}
+              {/*              <Field*/}
+              {/*                  label="Start date"*/}
+              {/*                  placeholder="YYYY-MM-DD"*/}
+              {/*                  name="sickLeave_startDate"*/}
+              {/*                  component={TextField}*/}
+              {/*              />*/}
+              {/*              <Field*/}
+              {/*                  label="End date"*/}
+              {/*                  placeholder="YYYY-MM-DD"*/}
+              {/*                  name="sickLeave_endDate"*/}
+              {/*                  component={TextField}*/}
+              {/*              />*/}
+              {/*          </fieldset>*/}
+              {/*            <Box marginY={2}/>*/}
+              {/*        </>*/}
+              {/*        ) : null*/}
+              {/*}*/}
 
               <Grid>
               <Grid item>

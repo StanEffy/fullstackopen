@@ -188,14 +188,14 @@ export const parseValidEntry = ({
                                     specialist,
                                     // sickLeave,
                                     diagnosisCodes,
-                                    discharge_date,
-                                    discharge_criteria,
+                                    dischargeDate,
+                                    dischargeCriteria,
                                     // employerName,
                                     // healthCheckRating
                                     }: EntriesFormValues ): Omit<HospitalEntry, 'id'>  =>{
     const discharge:unknown = {
-        date: discharge_date,
-        criteria: discharge_criteria
+        date: dischargeDate,
+        criteria: dischargeCriteria
     };
     const baseEntry = {
         description: parseDescription(description),
