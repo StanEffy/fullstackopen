@@ -21,16 +21,16 @@ export interface Discharge {
     criteria: string;
 }
 interface HealthCheckEntry extends BaseEntry {
-    type: EntryType.HealthCheck;
+    type: 'HealthCheck';
     healthCheckRating: HealthCheckRating;
 }
 interface OccupationalHealthcareEntry extends BaseEntry {
-    type: EntryType.OccupationalHealthcare;
+    type: 'OccupationalHealthcare';
     employerName: string;
     sickLeave: SickLeave;
 }
 interface HospitalEntry extends BaseEntry {
-    type: EntryType.Hospital;
+    type: 'Hospital';
     discharge: Discharge;
 }
 
@@ -61,9 +61,9 @@ export enum EntryType {
 }
 
 export enum Gender {
-    male = "male",
-    female = "female",
-    other = "other"
+    Male = "male",
+    Female = "female",
+    Other = "other"
 }
 export type PublicPatient = Omit<Patient, 'ssn' | 'entries'>;
 export type NewPatient = Omit<Patient, "id">;

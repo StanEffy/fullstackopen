@@ -80,7 +80,7 @@ const isGender = (gender: any): gender is Gender => {
 };
 
 const parseGender = (gender: unknown): Gender => {
-    if (!gender || !isGender(gender)) {
+    if (!gender || !isString(gender) || !isGender(gender) ) {
         throw new Error(`Incorrect or missing gender: ${gender}`);
     }
     return gender;
@@ -106,21 +106,10 @@ const parseEntries = (entries: any): Entry[] => {
     if (!entries) {
         throw new Error(`Incorrect or missing entries: ${entries}`);
     }
+
     return entries;
 };
-// const isDischarge = ({date, criteria}: {date: unknown, criteria: unknown}) =>{
-//     if(!date && !criteria || !parseDate(date) && !isString(criteria)){
-//         throw new Error(`something is wrong with date ${date} or criteria: ${criteria}`);
-//     }
-//     return true;
-// };
 
-// const parseDischarge = (discharge:{date: string, criteria: string}):Discharge => {
-//     if(!discharge || !isDischarge(discharge)){
-//         throw new Error(`Incorrect or missing discharge: ${discharge}`);
-//     }
-//     return discharge;
-// };
 const parseDischarge = (discharge: unknown): Discharge => {
     if (!(typeof discharge === "object" && discharge !== null)) {
         throw new Error("Value of discharge is missing or invalid");
