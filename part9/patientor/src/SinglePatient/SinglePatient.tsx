@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import { useParams} from "react-router-dom";
-import {Entry, Patient} from "../types";
+import {Entry, Gender, Patient} from "../types";
 import GetGenderLabel from "./getGenderLabel";
 import axios from "axios";
 import {apiBaseUrl} from "../constants";
@@ -8,6 +8,8 @@ import {PatientEntry} from "./PatientEntry";
 import {updateEntryForPatient, useStateValue} from "../state";
 import {Box, Button} from "@material-ui/core";
 import AddEntryModal from "../AddEntryForm";
+import {EntriesFormValues} from "../AddEntryForm/AddEntryForm";
+import {parseValidEntry} from "../utils/utils";
 
 const SinglePatient = () => {
     const { id } = useParams<{ id: string }>();
@@ -27,14 +29,16 @@ const SinglePatient = () => {
 
     if(id === undefined) return null;
 
-    const submitNewEntry = async (values: Entry) => {
+    const submitNewEntry = async (values: EntriesFormValues) => {
+
         try {
+            const parsedValues = parseValidEntry(values);
             const { data: newEntry } = await axios.post<Entry>(
                 `${apiBaseUrl}/patients/${id}/entries`,
-                values
+                parsedValues
             );
-            console.log(newEntry);
-            dispatch(updateEntryForPatient(id, values));
+
+            dispatch(updateEntryForPatient(id, newEntry));
             closeModal();
         } catch (e: unknown) {
             if (axios.isAxiosError(e)) {
@@ -67,12 +71,13 @@ const SinglePatient = () => {
 
     return (
         <div>
-            <h2>{patient.name} <GetGenderLabel gender={patient.gender}/></h2>
+            <h2>{patient.name} <GetGenderLabel gender={patient.gender as Gender}/></h2>
             <p>SSN: {patient.ssn}</p>
             <p>occupation: {patient.occupation}</p>
             <h2>Entries:</h2>
 
             {patient?.entries?.map((entry) => (
+                // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
                 <PatientEntry key={entry.id} entry={entry} diagnoses={diagnoses} />
             ))}
             <Box marginBottom={4}/>

@@ -1,4 +1,4 @@
-
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface BaseEntry {
   id: string;
   description: string;
@@ -21,23 +21,19 @@ export interface Discharge {
   criteria: string;
 }
 export interface HealthCheckEntry extends BaseEntry {
-  type: EntryType.HealthCheck;
-  healthCheckRating: HealthCheckRating;
+  type: 'HealthCheck';
+  healthCheckRating?: HealthCheckRating;
 }
 export interface OccupationalHealthcareEntry extends BaseEntry {
-  type: EntryType.OccupationalHealthcare;
-  sickLeave: SickLeave;
+  type: 'OccupationalHealthcare';
   employerName: string;
+  sickLeave: SickLeave;
 }
 export interface HospitalEntry extends BaseEntry {
-  type: EntryType.Hospital;
+  type: 'Hospital';
   discharge: Discharge;
 }
-export enum EntryType {
-  OccupationalHealthcare = 'OccupationalHealthcare',
-  Hospital = 'Hospital',
-  HealthCheck = 'HealthCheck'
-}
+
 export type Entry =
     | HospitalEntry
     | OccupationalHealthcareEntry
@@ -52,11 +48,17 @@ export type Patient = {
   id: string,
   name: string,
   dateOfBirth: string,
-  ssn?: string,
-  gender: Gender,
+  ssn: string,
+  gender: string,
   occupation: string,
-  entries?: Entry[],
+  entries: Entry[],
 };
+
+export enum EntryType {
+  OccupationalHealthcare = 'OccupationalHealthcare',
+  Hospital = 'Hospital',
+  HealthCheck = 'HealthCheck'
+}
 
 export enum Gender {
   Male = "male",
@@ -65,4 +67,6 @@ export enum Gender {
 }
 export type PublicPatient = Omit<Patient, 'ssn' | 'entries'>;
 export type NewPatient = Omit<Patient, "id">;
+export type NewEntry = Omit<Entry, "id">;
+
 export type DiagnoseState = { [code: string]: Diagnosis };

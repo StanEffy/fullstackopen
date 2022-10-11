@@ -1,5 +1,6 @@
 import { State } from "./state";
 import {Diagnosis, Entry, Patient} from "../types";
+import {EntriesFormValues} from "../AddEntryForm/AddEntryForm";
 
 export type Action =
   | {
@@ -34,7 +35,7 @@ export const addPatient = (patient: Patient) => ({
   payload: patient,
 });
 
-export const updateEntryForPatient = (id: string, entry: Entry) => ({
+export const updateEntryForPatient = (id: string, entry: EntriesFormValues) => ({
   type: "UPDATE_ENTRY_FOR_PATIENT" as const,
   payload: { id, entry },
 });

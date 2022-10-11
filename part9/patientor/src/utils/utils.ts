@@ -1,4 +1,5 @@
-import {Discharge, Entry, EntryType, Gender, HealthCheckRating, Patient, SickLeave} from "../types";
+import {Discharge, Entry, EntryType, Gender, HealthCheckRating, HospitalEntry, Patient, SickLeave} from "../types";
+import {EntriesFormValues} from "../AddEntryForm/AddEntryForm";
 
 export const isString = (text: unknown): text is string => {
     return typeof text === 'string' || text instanceof String;
@@ -62,6 +63,7 @@ const parseEntryType = (type: unknown):EntryType =>{
     }
     return type;
 };
+
 const parseDiagnosisCodes = (codes: unknown): string[] => {
     if (codes === undefined) return [] as string[];
     if (Array.isArray(codes) === false) {
@@ -93,6 +95,7 @@ const parseEmployerName = (name: unknown) => {
 };
 
 const parseHealthcheckRating = (rating: unknown): HealthCheckRating => {
+    if(!rating) return HealthCheckRating.Healthy;
     if(rating === 0) return HealthCheckRating.Healthy;
     if(rating === 1) return HealthCheckRating.LowRisk;
     if(rating === 2) return HealthCheckRating.HighRisk;
@@ -127,7 +130,10 @@ const parseDischarge = (discharge: unknown): Discharge => {
     }
 
     if (!("date" in discharge && "criteria" in discharge)) {
-        throw new Error("Object discharge does not include all of the required fields");
+        return {
+            criteria: parseCriteria("Without criteria"),
+            date: parseDate("Without date"),
+        };
     }
 
     const obj = discharge as { date: unknown; criteria: unknown };
@@ -165,56 +171,62 @@ export const makeNewPatientEntry = (object: any): Omit<Patient, "id"> => {
         entries: parseEntries(object.entries),
     };
 };
-
+// {
+//     description: unknown;
+//     id?: string;
+//     date: unknown;
+//     specialist: unknown;
+//     diagnosisCodes: unknown;
+//     discharge: unknown;
+//     employerName: unknown;
+//     sickLeave: unknown;
+//     healthCheckRating: unknown}
 export const parseValidEntry = ({
-                                    type,
+                                    // type,
                                     description,
                                     date,
                                     specialist,
-                                    sickLeave,
+                                    // sickLeave,
                                     diagnosisCodes,
-                                    discharge,
-                                    employerName,
-                                    healthCheckRating}: {
-    type: unknown;
-    description: unknown;
-    id?: string;
-    date: unknown;
-    specialist: unknown;
-    diagnosisCodes?: unknown;
-    discharge?: unknown;
-    employerName?: unknown;
-    sickLeave?: unknown;
-    healthCheckRating?: unknown}): Omit<Entry, 'id'> =>{
-
+                                    discharge_date,
+                                    discharge_criteria,
+                                    // employerName,
+                                    // healthCheckRating
+                                    }: EntriesFormValues ): Omit<HospitalEntry, 'id'>  =>{
+    const discharge:unknown = {
+        date: discharge_date,
+        criteria: discharge_criteria
+    };
     const baseEntry = {
         description: parseDescription(description),
         date: parseDate(date),
         specialist: parseSpecialist(specialist),
-        type: parseEntryType(type),
-        diagnosisCodes: parseDiagnosisCodes(diagnosisCodes)
+        type: "Hospital" as const,
+        diagnosisCodes: parseDiagnosisCodes(diagnosisCodes),
+        discharge: parseDischarge(discharge),
     };
 
-    switch (baseEntry.type) {
-        case EntryType.Hospital:
-            return {
-                ...baseEntry,
-                type: EntryType.Hospital,
-                discharge: parseDischarge(discharge)
-            };
-        case  EntryType.HealthCheck:
-            return {
-                ...baseEntry,
-                type: EntryType.HealthCheck,
-                healthCheckRating: parseHealthcheckRating(healthCheckRating)
-            };
-        case EntryType.OccupationalHealthcare:
-            return {
-                ...baseEntry,
-                type: EntryType.OccupationalHealthcare,
-                employerName: parseEmployerName(employerName),
-                sickLeave: parseSickLeave(sickLeave)
-            };
-    }
+    return baseEntry;
+    // switch (baseEntry.type) {
+    //     case EntryType.Hospital:
+    //         return {
+    //             ...baseEntry,
+    //             discharge: parseDischarge(discharge),
+    //         };
+        // case  EntryType.HealthCheck:
+        //     return {
+        //         ...baseEntry,
+        //         type: EntryType.HealthCheck,
+        //         healthCheckRating: parseHealthcheckRating(healthCheckRating),
+        //     };
+        // case EntryType.OccupationalHealthcare:
+        //     return {
+        //         ...baseEntry,
+        //         type: EntryType.OccupationalHealthcare,
+        //         sickLeave: parseSickLeave(sickLeave),
+        //         employerName: parseEmployerName(employerName),
+        //
+        //     };
+    // }
 
 };

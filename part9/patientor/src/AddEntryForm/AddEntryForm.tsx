@@ -3,7 +3,7 @@ import {Button, Grid} from "@material-ui/core";
 import {Field, Form, Formik} from "formik";
 
 import {DiagnosisSelection, SelectField, TextField, TypeOption} from "./FormField";
-import {Entry, EntryType, HealthCheckRating} from "../types";
+import {Entry, EntryType, HealthCheckRating, HospitalEntry} from "../types";
 import {useStateValue} from "../state";
 import {Box} from "@mui/material";
 
@@ -11,7 +11,7 @@ import {Box} from "@mui/material";
  * use type Patient, but omit id and entries,
  * because those are irrelevant for new patient object.
  */
-export type EntriesFormValues = Omit<Entry, 'id'>;
+export type EntriesFormValues = Omit<HospitalEntry, 'id' | 'discharge'>;
 
 interface Props {
   onSubmit: (values: EntriesFormValues) => void;
@@ -29,7 +29,7 @@ export const AddEntryForm = ({ onSubmit, onCancel }: Props) => {
     const [type, setType] = useState<EntryType>(EntryType.Hospital);
 
     const handleTypeChange = (value: string) => {
-        console.log(value);
+
         switch (value) {
             case "Hospital":
                 setType(EntryType.Hospital);
