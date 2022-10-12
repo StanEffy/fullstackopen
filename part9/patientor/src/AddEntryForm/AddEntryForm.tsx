@@ -11,10 +11,14 @@ import {Box} from "@mui/material";
  * use type Patient, but omit id and entries,
  * because those are irrelevant for new patient object.
  */
-export type EntriesFormValues = Omit<BaseEntry, 'id' | 'discharge'> & {
+export type EntriesFormValues = Omit<BaseEntry, 'id' | 'discharge' | 'sickLeave'> & {
     dischargeDate: string,
     dischargeCriteria: string,
-    type: EntryType
+    entryType: EntryType,
+
+    sickLeaveStartDate: string,
+    sickLeaveEndDate: string,
+    employerName: string;
 };
 
 interface Props {
@@ -53,9 +57,13 @@ export const AddEntryForm = ({ onSubmit, onCancel }: Props) => {
           description: "",
           date: "",
           specialist: "",
-          type: EntryType.Hospital,
+          entryType: EntryType.Hospital,
           dischargeCriteria: "",
-          dischargeDate: ""
+          dischargeDate: "",
+
+          sickLeaveStartDate: "",
+          sickLeaveEndDate: "",
+          employerName: ""
       }}
       onSubmit={onSubmit}
       validate={(values) => {
@@ -108,7 +116,7 @@ export const AddEntryForm = ({ onSubmit, onCancel }: Props) => {
       {({ isValid, dirty,setFieldValue, setFieldTouched }) => {
         return (
           <Form className="form ui">
-              <SelectField label="Entry Type" name="type" options={typeOptions} onChange={handleTypeChange}/>
+              <SelectField label="Entry Type" name="entryType" options={typeOptions} onChange={handleTypeChange}/>
             <Field
               label="Description"
               placeholder="Description"
@@ -145,7 +153,7 @@ export const AddEntryForm = ({ onSubmit, onCancel }: Props) => {
                   type === EntryType.Hospital ? (
                       <>
                           <fieldset>
-                              <legend>Sick leave dates</legend>
+                              <legend>Discharge</legend>
                               <Field
                                   label="Start date"
                                   placeholder="YYYY-MM-DD"
@@ -164,34 +172,34 @@ export const AddEntryForm = ({ onSubmit, onCancel }: Props) => {
                   ) : null
               }
 
-              {/*{*/}
-              {/*    type === EntryType.OccupationalHealthcare ? (*/}
-              {/*        <>*/}
-              {/*            <Field*/}
-              {/*                label="Employer Name"*/}
-              {/*                placeholder="Employer Name"*/}
-              {/*                name="employerName"*/}
-              {/*                component={TextField}*/}
-              {/*            />*/}
-              {/*          <fieldset>*/}
-              {/*              <legend>Sick leave dates</legend>*/}
-              {/*              <Field*/}
-              {/*                  label="Start date"*/}
-              {/*                  placeholder="YYYY-MM-DD"*/}
-              {/*                  name="sickLeave_startDate"*/}
-              {/*                  component={TextField}*/}
-              {/*              />*/}
-              {/*              <Field*/}
-              {/*                  label="End date"*/}
-              {/*                  placeholder="YYYY-MM-DD"*/}
-              {/*                  name="sickLeave_endDate"*/}
-              {/*                  component={TextField}*/}
-              {/*              />*/}
-              {/*          </fieldset>*/}
-              {/*            <Box marginY={2}/>*/}
-              {/*        </>*/}
-              {/*        ) : null*/}
-              {/*}*/}
+              {
+                  type === EntryType.OccupationalHealthcare ? (
+                      <>
+                          <Field
+                              label="Employer Name"
+                              placeholder="Employer Name"
+                              name="employerName"
+                              component={TextField}
+                          />
+                        <fieldset>
+                            <legend>Sick leave dates</legend>
+                            <Field
+                                label="Start date"
+                                placeholder="YYYY-MM-DD"
+                                name="sickLeaveStartDate"
+                                component={TextField}
+                            />
+                            <Field
+                                label="End date"
+                                placeholder="YYYY-MM-DD"
+                                name="sickLeaveEndDate"
+                                component={TextField}
+                            />
+                        </fieldset>
+                          <Box marginY={2}/>
+                      </>
+                      ) : null
+              }
 
               <Grid>
               <Grid item>

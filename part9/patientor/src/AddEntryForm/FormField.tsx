@@ -39,13 +39,9 @@ export const SelectField = ({ name, label, options, onChange }: SelectFieldProps
       label={label}
       component={FormikSelect}
       name={name}
-      onChange={(e:any) => {
-          console.log(e);
-          onChange(e.target.value);
-      }}
     >
       {options.map((option) => (
-        <MenuItem key={option.value} value={option.value}>
+        <MenuItem key={option.value} value={option.value} onClick={() => onChange(option.value)}>
           {option.label || option.value}
         </MenuItem>
       ))}
