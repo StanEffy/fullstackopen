@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import { useParams} from "react-router-dom";
-import {Entry, Gender, Patient} from "../types";
+import {Entry, EntryType, Gender, Patient} from "../types";
 import GetGenderLabel from "./getGenderLabel";
 import axios from "axios";
 import {apiBaseUrl} from "../constants";
@@ -9,7 +9,12 @@ import {updateEntryForPatient, useStateValue} from "../state";
 import {Box, Button} from "@material-ui/core";
 import AddEntryModal from "../AddEntryForm";
 import {EntriesFormValues} from "../AddEntryForm/AddEntryForm";
-import {parseValidEntry} from "../utils/utils";
+import {
+    parseHealthCheckEntry,
+    parseOccupationalHealthcareEntry,
+    parseValidEntry,
+    parseValidHospitalEntry
+} from "../utils/utils";
 
 const SinglePatient = () => {
     const { id } = useParams<{ id: string }>();
@@ -33,9 +38,36 @@ const SinglePatient = () => {
         console.log(values);
         try {
             const parsedValues = parseValidEntry(values);
+            let entryRes;
+            let obj;
+            switch (values.entryType) {
+                case EntryType.Hospital:
+                    obj = {
+                        entry: parsedValues,
+                        dischargeDate: values.dischargeDate,
+                        dischargeCriteria: values.dischargeCriteria
+                    };
+                    entryRes = parseValidHospitalEntry(obj);
+                    break;
+                case EntryType.HealthCheck:
+                    obj = {
+                        entry: parsedValues,
+                       ...values
+                    };
+                    entryRes = parseHealthCheckEntry(obj);
+                    break;
+                case EntryType.OccupationalHealthcare:
+                    obj = {
+                        entry: parsedValues,
+                        ...values
+                    };
+                    entryRes = parseOccupationalHealthcareEntry(obj);
+                    break;
+            }
+            console.log(entryRes);
             const { data: newEntry } = await axios.post<Entry>(
                 `${apiBaseUrl}/patients/${id}/entries`,
-                parsedValues
+                entryRes
             );
 
             dispatch(updateEntryForPatient(id, newEntry));

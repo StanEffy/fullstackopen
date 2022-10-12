@@ -8,8 +8,8 @@ import {useStateValue} from "../state";
 import {Box} from "@mui/material";
 
 /*
- * use type Patient, but omit id and entries,
- * because those are irrelevant for new patient object.
+ * we are using type BaseEntry, but omit id
+ * cause we are creating this on back end
  */
 export type EntriesFormValues = Omit<BaseEntry, 'id' | 'discharge' | 'sickLeave'> & {
     dischargeDate: string,
@@ -62,23 +62,7 @@ export const AddEntryForm = ({ onSubmit, onCancel }: Props) => {
     const handleRatingChange = (value: string) => {
         console.log(value);
     };
- // const handleRatingChange = (value: string) => {
- //
- //     switch (value) {
- //         case "Healthy":
- //             setType(HealthCheckRating.Healthy);
- //             break;
- //         case "LowRisk":
- //             setType(HealthCheckRating.LowRisk);
- //             break;
- //         case "HighRisk":
- //             setType(HealthCheckRating.HighRisk);
- //             break;
- //         case "CriticalRisk":
- //             setType(HealthCheckRating.CriticalRisk);
- //             break;
- //     }
- // };
+
   return (
     <Formik
       initialValues={{

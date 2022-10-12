@@ -1,4 +1,14 @@
-import {Discharge, Entry, EntryType, Gender, HealthCheckRating, HospitalEntry, Patient, SickLeave} from "../types";
+import {
+    BaseEntry,
+    Discharge,
+    Entry,
+    EntryType,
+    Gender, HealthCheckEntry,
+    HealthCheckRating,
+    HospitalEntry, OccupationalHealthcareEntry,
+    Patient,
+    SickLeave
+} from "../types";
 import {EntriesFormValues} from "../AddEntryForm/AddEntryForm";
 
 export const isString = (text: unknown): text is string => {
@@ -171,62 +181,64 @@ export const makeNewPatientEntry = (object: any): Omit<Patient, "id"> => {
         entries: parseEntries(object.entries),
     };
 };
-// {
-//     description: unknown;
-//     id?: string;
-//     date: unknown;
-//     specialist: unknown;
-//     diagnosisCodes: unknown;
-//     discharge: unknown;
-//     employerName: unknown;
-//     sickLeave: unknown;
-//     healthCheckRating: unknown}
+
 export const parseValidEntry = ({
-                                    // type,
                                     description,
                                     date,
                                     specialist,
-                                    // sickLeave,
                                     diagnosisCodes,
-                                    dischargeDate,
-                                    dischargeCriteria,
-                                    // employerName,
-                                    // healthCheckRating
-                                    }: EntriesFormValues ): Omit<HospitalEntry, 'id'>  =>{
+                                }: EntriesFormValues ): Omit<BaseEntry, 'id'>  =>{
+    const baseEntry = {
+        description: parseDescription(description),
+        date: parseDate(date),
+        specialist: parseSpecialist(specialist),
+        diagnosisCodes: parseDiagnosisCodes(diagnosisCodes),
+    };
+
+    return baseEntry;
+};
+export const parseValidHospitalEntry = ({
+                                   entry,
+                                            dischargeDate,
+                                            dischargeCriteria
+                                    }: { entry: Omit<BaseEntry, 'id'>,
+    dischargeDate: string,
+    dischargeCriteria: string
+
+} ): Omit<HospitalEntry, 'id'>  =>{
     const discharge:unknown = {
         date: dischargeDate,
         criteria: dischargeCriteria
     };
     const baseEntry = {
-        description: parseDescription(description),
-        date: parseDate(date),
-        specialist: parseSpecialist(specialist),
+        ...entry,
         type: "Hospital" as const,
-        diagnosisCodes: parseDiagnosisCodes(diagnosisCodes),
         discharge: parseDischarge(discharge),
     };
-
     return baseEntry;
-    // switch (baseEntry.type) {
-    //     case EntryType.Hospital:
-    //         return {
-    //             ...baseEntry,
-    //             discharge: parseDischarge(discharge),
-    //         };
-        // case  EntryType.HealthCheck:
-        //     return {
-        //         ...baseEntry,
-        //         type: EntryType.HealthCheck,
-        //         healthCheckRating: parseHealthcheckRating(healthCheckRating),
-        //     };
-        // case EntryType.OccupationalHealthcare:
-        //     return {
-        //         ...baseEntry,
-        //         type: EntryType.OccupationalHealthcare,
-        //         sickLeave: parseSickLeave(sickLeave),
-        //         employerName: parseEmployerName(employerName),
-        //
-        //     };
-    // }
+};
 
+export const parseHealthCheckEntry = ({entry, healthCheckRating} : {entry: Omit<BaseEntry, 'id'>, healthCheckRating:HealthCheckRating}):Omit<HealthCheckEntry, "id"> => {
+    return {
+        ...entry,
+        type: EntryType.HealthCheck,
+        healthCheckRating: parseHealthcheckRating(healthCheckRating)
+    };
+};
+
+export const parseOccupationalHealthcareEntry = ({entry, employerName, sickLeaveStartDate,
+                                              sickLeaveEndDate, } : {entry: Omit<BaseEntry, 'id'>, sickLeaveStartDate: string,
+    sickLeaveEndDate: string, employerName: string}) : Omit<OccupationalHealthcareEntry, 'id'> => {
+
+    const sickLeave = {
+        startDate: sickLeaveStartDate,
+        endDate: sickLeaveEndDate
+    };
+    return {
+                ...entry,
+                type: EntryType.OccupationalHealthcare,
+                sickLeave: parseSickLeave(sickLeave),
+                employerName: parseEmployerName(employerName),
+
+            };
 };
