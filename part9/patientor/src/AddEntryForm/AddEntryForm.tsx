@@ -2,7 +2,7 @@ import React, {useState} from "react";
 import {Button, Grid} from "@material-ui/core";
 import {Field, Form, Formik} from "formik";
 
-import {DiagnosisSelection, SelectField, TextField, TypeOption} from "./FormField";
+import {DiagnosisSelection, SelectField, TextField, TypeOption, RatingOption} from "./FormField";
 import {BaseEntry, EntryType, HealthCheckRating} from "../types";
 import {useStateValue} from "../state";
 import {Box} from "@mui/material";
@@ -34,6 +34,13 @@ const typeOptions:TypeOption[] = [
     {value: EntryType.OccupationalHealthcare, label: "OccupationalHealthcare"}
 ];
 
+const ratingOptions:RatingOption[] = [
+    {value: HealthCheckRating.Healthy, label: "Healthy"},
+    {value: HealthCheckRating.LowRisk, label: "LowRisk"},
+    {value: HealthCheckRating.HighRisk, label: "HighRisk"},
+    {value: HealthCheckRating.CriticalRisk, label: "CriticalRisk"}
+
+];
 export const AddEntryForm = ({ onSubmit, onCancel }: Props) => {
     const [{ diagnoses }] = useStateValue();
     const [type, setType] = useState<EntryType>(EntryType.Hospital);
@@ -52,7 +59,26 @@ export const AddEntryForm = ({ onSubmit, onCancel }: Props) => {
                 break;
         }
     };
-
+    const handleRatingChange = (value: string) => {
+        console.log(value);
+    };
+ // const handleRatingChange = (value: string) => {
+ //
+ //     switch (value) {
+ //         case "Healthy":
+ //             setType(HealthCheckRating.Healthy);
+ //             break;
+ //         case "LowRisk":
+ //             setType(HealthCheckRating.LowRisk);
+ //             break;
+ //         case "HighRisk":
+ //             setType(HealthCheckRating.HighRisk);
+ //             break;
+ //         case "CriticalRisk":
+ //             setType(HealthCheckRating.CriticalRisk);
+ //             break;
+ //     }
+ // };
   return (
     <Formik
       initialValues={{
@@ -139,12 +165,7 @@ export const AddEntryForm = ({ onSubmit, onCancel }: Props) => {
                   diagnoses={Object.values(diagnoses)}
               />
               {
-                  type === EntryType.HealthCheck ? <Field
-                      label="Healthcheck Rating (0 Healthy - 3 Near death)"
-                      placeholder="Healthcheck Rating "
-                      name="healthCheckRating"
-                      component={TextField}
-                  /> : null
+                  type === EntryType.HealthCheck ? <SelectField label="Healthcheck Rating" name="healthCheckRating" options={ratingOptions} onChange={handleRatingChange}/> : null
               }
 
               {
