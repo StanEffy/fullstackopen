@@ -3,7 +3,7 @@ import {Button, Grid} from "@material-ui/core";
 import {Field, Form, Formik} from "formik";
 
 import {DiagnosisSelection, SelectField, TextField, TypeOption} from "./FormField";
-import {BaseEntry, EntryType} from "../types";
+import {BaseEntry, EntryType, HealthCheckRating} from "../types";
 import {useStateValue} from "../state";
 import {Box} from "@mui/material";
 
@@ -19,6 +19,8 @@ export type EntriesFormValues = Omit<BaseEntry, 'id' | 'discharge' | 'sickLeave'
     sickLeaveStartDate: string,
     sickLeaveEndDate: string,
     employerName: string;
+
+    healthCheckRating: HealthCheckRating;
 };
 
 interface Props {
@@ -63,7 +65,9 @@ export const AddEntryForm = ({ onSubmit, onCancel }: Props) => {
 
           sickLeaveStartDate: "",
           sickLeaveEndDate: "",
-          employerName: ""
+          employerName: "",
+
+          healthCheckRating: HealthCheckRating.Healthy
       }}
       onSubmit={onSubmit}
       validate={(values) => {
@@ -81,35 +85,29 @@ export const AddEntryForm = ({ onSubmit, onCancel }: Props) => {
         if (!values.diagnosisCodes) {
           errors.diagnosisCodes = requiredError;
         }
-        if(!values.dischargeCriteria ){
-              errors.dischargeCriteria = requiredError;
-          }
-          if(!values.dischargeDate ){
-              errors.dischargeDate = requiredError;
-          }
-        // if(values.type === EntryType.HealthCheck){
-        //     if(!values.healthCheckRating){
-        //         errors.healthCheckRating = requiredError;
-        //     }
-        // } else if(values.type === EntryType.Hospital){
-        //
-        //
-        //
-        //
-        //
-        //
-        //
-        //   } else if(values.type === EntryType.OccupationalHealthcare){
-        //     if(!values.employerName){
-        //         errors.employerName = requiredError;
-        //     }
-        //     if(!values.sickLeave_startDate ){
-        //         errors.sickLeave_startDate = requiredError;
-        //     }
-        //     if( !values.sickLeave_endDate){
-        //         errors.sickLeave_endDate = requiredError;
-        //     }
-        // }
+
+        if(values.entryType === EntryType.HealthCheck){
+            if(!values.healthCheckRating){
+                errors.healthCheckRating = requiredError;
+            }
+        } else if(values.entryType === EntryType.Hospital){
+            if(!values.dischargeCriteria ){
+                errors.dischargeCriteria = requiredError;
+            }
+            if(!values.dischargeDate ){
+                errors.dischargeDate = requiredError;
+            }
+          } else if(values.entryType === EntryType.OccupationalHealthcare){
+            if(!values.employerName){
+                errors.employerName = requiredError;
+            }
+            if(!values.sickLeaveStartDate ){
+                errors.sickLeaveStartDate = requiredError;
+            }
+            if( !values.sickLeaveEndDate){
+                errors.sickLeaveEndDate = requiredError;
+            }
+        }
         return errors;
       }}
     >
@@ -140,14 +138,14 @@ export const AddEntryForm = ({ onSubmit, onCancel }: Props) => {
                   setFieldTouched={setFieldTouched}
                   diagnoses={Object.values(diagnoses)}
               />
-              {/*{*/}
-              {/*    type === EntryType.HealthCheck ? <Field*/}
-              {/*        label="Healthcheck Rating (0 Healthy - 3 Near death)"*/}
-              {/*        placeholder="Healthcheck Rating "*/}
-              {/*        name="healthCheckRating"*/}
-              {/*        component={TextField}*/}
-              {/*    /> : null*/}
-              {/*}*/}
+              {
+                  type === EntryType.HealthCheck ? <Field
+                      label="Healthcheck Rating (0 Healthy - 3 Near death)"
+                      placeholder="Healthcheck Rating "
+                      name="healthCheckRating"
+                      component={TextField}
+                  /> : null
+              }
 
               {
                   type === EntryType.Hospital ? (
