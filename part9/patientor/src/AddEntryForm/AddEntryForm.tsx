@@ -13,7 +13,8 @@ import {Box} from "@mui/material";
  */
 export type EntriesFormValues = Omit<BaseEntry, 'id' | 'discharge'> & {
     dischargeDate: string,
-    dischargeCriteria: string
+    dischargeCriteria: string,
+    type: EntryType
 };
 
 interface Props {
@@ -52,7 +53,6 @@ export const AddEntryForm = ({ onSubmit, onCancel }: Props) => {
           description: "",
           date: "",
           specialist: "",
-          diagnosisCodes: undefined,
           type: EntryType.Hospital,
           dischargeCriteria: "",
           dischargeDate: ""
