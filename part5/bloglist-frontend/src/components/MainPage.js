@@ -4,6 +4,7 @@ import { Route, Routes } from "react-router-dom"
 import UsersView from "./UsersView/UsersView"
 import SingleUser from "./UsersView/SingleUser"
 import { useSelector } from "react-redux"
+import SingleBlogPost from "./SingleBlogPost/SingleBlogPost"
 
 const MainPage = () => {
 	const blogs = useSelector((state) => state.blogs)
@@ -17,6 +18,7 @@ const MainPage = () => {
 				<Route path={"/"} element={<BlogList blogs={blogsSorted} />} />
 				<Route path={"/users/:id"} element={<SingleUser />} />
 				<Route path={"/users"} element={<UsersView />} />
+				<Route path={"/blogs/:id"} element={<SingleBlogPost />} />
 			</Routes>
 		</>
 	)
