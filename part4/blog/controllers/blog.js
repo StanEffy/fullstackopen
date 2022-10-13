@@ -1,8 +1,9 @@
 const blogRouter = require("express").Router()
 const Blog = require("../schema/blog")
 const middleware = require("../utils/middleware")
-const {info} = require("../utils/logger")
 
+
+// /:id/comments
 
 blogRouter.get("/", async (request, response) => {
     const blogs = await Blog.find({}).populate("user")
@@ -82,7 +83,7 @@ blogRouter.delete("/:id", middleware.userExtractor, async (request, response, ne
         const user = request.user
         if ( result.user && result.user.toString() !== user.id ) {
             return response.status(401).json({
-                error: "only the creator can delete a blog"
+                error: "only the Creator can delete a blog"
             })
         }
 
@@ -91,6 +92,18 @@ blogRouter.delete("/:id", middleware.userExtractor, async (request, response, ne
         await user.save()
 
         response.status(204).json(result)
+    } catch (exception) {
+        next(exception)
+    }
+})
+
+blogRouter.post("/:id/comments", async (request, response, next) => {
+    try {
+        const id =  request.params.id
+        const result = await Blog.findById(id)
+        result.comments.push(request.body)
+        await result.save()
+        response.status(201).json(result.comments)
     } catch (exception) {
         next(exception)
     }
