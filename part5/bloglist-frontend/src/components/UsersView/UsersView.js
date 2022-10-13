@@ -16,13 +16,13 @@ const UsersView = () => {
 			<h3>Users view</h3>
 			{users.map((u) => {
 				return u.blogs.length ? (
-					<p>
-						<Link to={`/users/${u.id}`} key={u.id}>
+					<p key={u.id + "-users-view"}>
+						<Link to={`/users/${u.id}`}>
 							{u.username} with {u.blogs.length} blogposts
 						</Link>
 					</p>
 				) : (
-					<p key={u.id}>
+					<p key={u.id + "-users-view"}>
 						{u.username} with {u.blogs.length} blogposts
 					</p>
 				)
