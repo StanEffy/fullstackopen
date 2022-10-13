@@ -1,14 +1,18 @@
 import React, { useState } from "react"
 import blogService from "../../services/blogs"
-import PropTypes from "prop-types"
+import { useDispatch, useSelector } from "react-redux"
+import { setNotify } from "../../store/notificationReducer"
 
-const BlogForm = ({ setNotification }) => {
+const BlogForm = () => {
 	const [visible, setVisibility] = useState(false)
 	const [blogpost, setBlogpost] = useState({
 		title: "",
-		author: "",
 		url: "",
 	})
+	const { username } = useSelector((state) => state.user)
+	const dispatch = useDispatch()
+	const setNotification = (notification) => dispatch(setNotify(notification))
+
 	const hideForm = () => {
 		setVisibility(false)
 		setBlogpost((prev) => ({ ...prev, title: "", author: "", url: "" }))
@@ -20,16 +24,24 @@ const BlogForm = ({ setNotification }) => {
 	const handleSubmit = async (e) => {
 		e.preventDefault()
 		try {
-			const res = await blogService.createNewBlogpost(blogpost)
+			const res = await blogService.createNewBlogpost({
+				...blogpost,
+				author: username,
+			})
+
 			setNotification({
 				type: "success",
 				message: `Yaaay! New blogpost ${res.title} was created by ${res.author}`,
 			})
 			setBlogpost((prev) => ({ ...prev, title: "", author: "", url: "" }))
-
-			// setBlogs((prev) => [...prev, res]);
 		} catch (e) {
-			setNotification({ type: "error", message: e.response.data.error })
+			console.log(e)
+			setNotification({
+				type: "error",
+				message: e?.response?.data?.error
+					? e.response.data.error
+					: e.message,
+			})
 		}
 	}
 	return (
@@ -49,23 +61,6 @@ const BlogForm = ({ setNotification }) => {
 										setBlogpost((prev) => ({
 											...prev,
 											title: target.value,
-										}))
-									}
-								/>
-							</label>
-						</div>
-						<div>
-							<label>
-								author
-								<input
-									type="text"
-									value={blogpost.author}
-									name="author"
-									id={"form-author"}
-									onChange={({ target }) =>
-										setBlogpost((prev) => ({
-											...prev,
-											author: target.value,
 										}))
 									}
 								/>
@@ -103,7 +98,5 @@ const BlogForm = ({ setNotification }) => {
 		</>
 	)
 }
-BlogForm.propTypes = {
-	setNotification: PropTypes.func,
-}
+
 export default BlogForm

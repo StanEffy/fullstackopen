@@ -12,6 +12,12 @@ const Blog = ({ blog }) => {
 		if (window.confirm("Are you sure you want to delete this post")) {
 			try {
 				dispatch(deletePost(id))
+				dispatch(
+					setNotify({
+						type: "success",
+						message: `Blog with ${id} was succesfully deleted, nice job`,
+					})
+				)
 			} catch (e) {
 				dispatch(
 					setNotify({

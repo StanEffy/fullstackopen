@@ -23,8 +23,8 @@ const App = () => {
 
 	const [username, setUsername] = useState("")
 	const [password, setPassword] = useState("")
-	const user = useSelector((state) => state.user)
 
+	const user = useSelector((state) => state.user)
 	const notification = useSelector((state) => state.notification)
 
 	useEffect(() => {
@@ -37,6 +37,7 @@ const App = () => {
 		event.preventDefault()
 		try {
 			dispatch(dispatchUser({ username, password }))
+
 			setUsername("")
 			setPassword("")
 		} catch (exception) {
@@ -52,6 +53,7 @@ const App = () => {
 		dispatch(dispatchLogout())
 	}
 	useEffect(() => {
+		console.log(notification)
 		if (notification) {
 			const timeoutId = setTimeout(() => {
 				dispatch(nullifyNotificationD())
@@ -88,7 +90,7 @@ const App = () => {
 					setUsername={setUsername}
 				/>
 			) : (
-				<MainPage />
+				<MainPage setNotification={setNotify} />
 			)}
 		</div>
 	)
