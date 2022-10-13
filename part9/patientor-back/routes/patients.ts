@@ -32,10 +32,12 @@ router.post('/', (req:TypedRequestBody<Omit<Patient, "id">>, res) => {
     res.send(addPatient);
 });
 
-router.post(':id/entries', (req:TypedRequestBody<NewEntry>, res) => {
+router.post('/:id/entries', (req:TypedRequestBody<NewEntry>, res) => {
     try {
         const id = req.params.id;
+
         const entry = req.body;
+
         const patientForEntry = patientEntries.find(p => p.id === id);
         const parsedEntry = parseValidEntry(entry);
         patientForEntry?.entries.push(parsedEntry);
