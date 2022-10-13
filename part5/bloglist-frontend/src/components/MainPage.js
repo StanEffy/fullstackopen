@@ -15,7 +15,10 @@ const MainPage = () => {
 	return (
 		<>
 			<Routes>
-				<Route path={"/"} element={<BlogList blogs={blogsSorted} />} />
+				<Route
+					path={"/blogs"}
+					element={<BlogList blogs={blogsSorted} />}
+				/>
 				<Route path={"/users/:id"} element={<SingleUser />} />
 				<Route path={"/users"} element={<UsersView />} />
 				<Route path={"/blogs/:id"} element={<SingleBlogPost />} />

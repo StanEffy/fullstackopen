@@ -19,6 +19,13 @@ const blogsSlice = createSlice({
 				b.id == action.payload ? { ...b, likes: b.likes + 1 } : b
 			)
 		},
+		addComment(state, action) {
+			const newState = [...state]
+			newState
+				.find((b) => b.id === action.payload.id)
+				.comments.push(action.payload.comment)
+			return newState
+		},
 		deleteBlog(state, action) {
 			return state.filter((b) => b.id != action.payload)
 		},
@@ -45,7 +52,20 @@ export const voteBlog = (blog) => {
 				...blog,
 				likes: blog.likes + 1,
 			})
-			dispatch(voteForBlog(blog.id))
+			dispatch(addComment())
+		} catch (e) {
+			dispatch(
+				setNotify({ message: e.response.data.error, type: "error" })
+			)
+		}
+	}
+}
+
+export const addCommentToBlog = (id, comment) => {
+	return async (dispatch) => {
+		try {
+			await blogsService.updateBlogpostComments(id, comment)
+			dispatch(addComment({ id, comment }))
 		} catch (e) {
 			dispatch(
 				setNotify({ message: e.response.data.error, type: "error" })
@@ -73,7 +93,7 @@ export const deletePost = (id) => {
 		}
 	}
 }
-export const { setAllBlogs, voteForBlog, deleteBlog, addBlog } =
+export const { setAllBlogs, voteForBlog, deleteBlog, addBlog, addComment } =
 	blogsSlice.actions
 
 export default blogsSlice.reducer

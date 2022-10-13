@@ -73,13 +73,17 @@ const App = () => {
 				/>
 			) : null}
 			{user && (
-				<>
+				<div
+					style={{ display: "flex", justifyContent: "space-between" }}
+				>
 					<Header />
 					<div>
-						Well, <b>{user.username}</b> is definitely logged in
+						<span>
+							Well, <b>{user.username}</b> is definitely logged in
+						</span>
+						<button onClick={() => logout()}>logout</button>
 					</div>
-					<button onClick={() => logout()}>logout</button>
-				</>
+				</div>
 			)}
 			{user === null ? (
 				<LoginForm
