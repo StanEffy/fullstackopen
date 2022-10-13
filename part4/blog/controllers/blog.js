@@ -100,8 +100,10 @@ blogRouter.delete("/:id", middleware.userExtractor, async (request, response, ne
 blogRouter.post("/:id/comments", async (request, response, next) => {
     try {
         const id =  request.params.id
+
         const result = await Blog.findById(id)
-        result.comments.push(request.body)
+
+        result.comments.push(request.body.comment)
         await result.save()
         response.status(201).json(result.comments)
     } catch (exception) {
