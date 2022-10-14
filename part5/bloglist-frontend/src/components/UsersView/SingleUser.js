@@ -37,7 +37,7 @@ const SingleUser = () => {
 
 			<Button
 				variant={"contained"}
-				onClick={() => navigate("/")}
+				onClick={() => navigate("/users")}
 				sx={{ margin: "20px auto", display: "block" }}
 			>
 				back to all
