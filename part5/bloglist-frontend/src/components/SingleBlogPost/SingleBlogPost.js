@@ -44,7 +44,13 @@ const SingleBlogPost = () => {
 		<Card sx={{ maxWidth: "500px", m: "20px auto" }}>
 			<CardContent>
 				<Typography variant={"h5"}>Title: {blog.title}</Typography>
-				<a href={blog.url}>Link to a blog</a>
+				<a
+					href={"https://" + blog.url}
+					target={"_blank"}
+					rel="noreferrer"
+				>
+					Link to a blog
+				</a>
 				<Box>
 					<Typography variant="body2">
 						{blog.likes} liked it!
