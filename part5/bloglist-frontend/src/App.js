@@ -13,7 +13,6 @@ import { dispatchLogout, dispatchUser } from "./store/usersReducer"
 import { nullifyNotificationD, setNotify } from "./store/notificationReducer"
 import MainPage from "./components/MainPage"
 import Header from "./components/Header/Header"
-import Button from "@mui/material/Button"
 
 const App = () => {
 	const dispatch = useDispatch()
