@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react"
 import usersServise from "../../services/login"
 import { useSelector } from "react-redux"
 import { Link } from "react-router-dom"
+import { Box, Typography } from "@mui/material"
 const UsersView = () => {
 	const [users, setUsers] = useState([])
 
@@ -12,22 +13,29 @@ const UsersView = () => {
 	}, [])
 	if (!loggedInUser) return null
 	return (
-		<div>
-			<h3>Users view</h3>
+		<Box sx={{ p: 1 }}>
+			<Typography variant={"h3"}>Users view</Typography>
 			{users.map((u) => {
 				return u.blogs.length ? (
-					<p key={u.id + "-users-view"}>
-						<Link to={`/users/${u.id}`}>
+					<Typography variant={"body1"} key={u.id + "-users-view"}>
+						<Link
+							style={{
+								color: "blue",
+								textDecoration: "none",
+								fontWeight: "bold",
+							}}
+							to={`/users/${u.id}`}
+						>
 							{u.username} with {u.blogs.length} blogposts
 						</Link>
-					</p>
+					</Typography>
 				) : (
-					<p key={u.id + "-users-view"}>
+					<Typography variant={"body1"} key={u.id + "-users-view"}>
 						{u.username} with {u.blogs.length} blogposts
-					</p>
+					</Typography>
 				)
 			})}
-		</div>
+		</Box>
 	)
 }
 
