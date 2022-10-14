@@ -52,7 +52,7 @@ export const voteBlog = (blog) => {
 				...blog,
 				likes: blog.likes + 1,
 			})
-			dispatch(addComment())
+			dispatch(voteForBlog(blog.id))
 		} catch (e) {
 			dispatch(
 				setNotify({ message: e.response.data.error, type: "error" })
