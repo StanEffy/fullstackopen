@@ -2,6 +2,7 @@ import React, { useState } from "react"
 import blogService from "../../services/blogs"
 import { useDispatch, useSelector } from "react-redux"
 import { setNotify } from "../../store/notificationReducer"
+import { Box, Button, FormControl, TextField, Typography } from "@mui/material"
 
 const BlogForm = () => {
 	const [visible, setVisibility] = useState(false)
@@ -48,52 +49,63 @@ const BlogForm = () => {
 		<>
 			{visible ? (
 				<>
-					<form onSubmit={handleSubmit}>
-						<div>
-							<label>
-								title
-								<input
-									type="text"
-									value={blogpost.title}
-									name="title"
-									id={"form-title"}
-									onChange={({ target }) =>
-										setBlogpost((prev) => ({
-											...prev,
-											title: target.value,
-										}))
-									}
-								/>
-							</label>
-						</div>
-						<div>
-							<label>
-								url
-								<input
-									type="text"
-									value={blogpost.url}
-									name="url"
-									id={"form-url"}
-									onChange={({ target }) =>
-										setBlogpost((prev) => ({
-											...prev,
-											url: target.value,
-										}))
-									}
-								/>
-							</label>
-						</div>
-						<button
+					<Box
+						component={"form"}
+						display={"flex"}
+						flexDirection={"column"}
+						sx={{ maxWidth: "500px" }}
+						onSubmit={handleSubmit}
+					>
+						<Typography variant={"h5"} textAlign={"center"}>
+							Creating new blogpost
+						</Typography>
+						<FormControl>
+							<TextField
+								type="text"
+								variant="filled"
+								label={"Blog title"}
+								value={blogpost.title}
+								name="title"
+								id={"form-title"}
+								onChange={({ target }) =>
+									setBlogpost((prev) => ({
+										...prev,
+										title: target.value,
+									}))
+								}
+							/>
+						</FormControl>
+						<FormControl>
+							<TextField
+								type="text"
+								value={blogpost.url}
+								variant="filled"
+								name="url"
+								label={"Blog url"}
+								id={"form-url"}
+								onChange={({ target }) =>
+									setBlogpost((prev) => ({
+										...prev,
+										url: target.value,
+									}))
+								}
+							/>
+						</FormControl>
+						<Button
 							id={"form-button-submit"}
+							variant={"contained"}
 							onClick={(e) => handleSubmit(e)}
+							sx={{ my: 1 }}
 						>
 							SEND NEW BLOGPOST
-						</button>
-					</form>
-					<button onClick={() => hideForm()}>cancel all this</button>
+						</Button>
+						<Button onClick={() => hideForm()}>
+							cancel all this
+						</Button>
+					</Box>
 				</>
 			) : (
-				<button onClick={() => showForm()}>add new blogpost</button>
+				<Button onClick={() => showForm()}>add new blogpost</Button>
 			)}
 		</>
 	)
