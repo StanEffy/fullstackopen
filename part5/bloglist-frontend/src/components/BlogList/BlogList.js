@@ -2,7 +2,7 @@ import React, { useEffect } from "react"
 import Blog from "../Blog"
 import PropTypes from "prop-types"
 import BlogForm from "../BlogForm/BlogForm"
-import { Typography } from "@mui/material"
+import { List, Typography } from "@mui/material"
 
 const BlogList = ({ blogs = [] }) => {
 	useEffect(() => {}, [blogs])
@@ -12,11 +12,11 @@ const BlogList = ({ blogs = [] }) => {
 				BLOGS
 			</Typography>
 			<BlogForm />
-			<ul className={"blog-list"}>
+			<List className={"blog-list"}>
 				{blogs.map((blog) => (
 					<Blog key={blog.id} blog={blog} />
 				))}
-			</ul>
+			</List>
 		</div>
 	)
 }
