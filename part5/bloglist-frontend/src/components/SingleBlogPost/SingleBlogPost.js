@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux"
 import { useParams } from "react-router-dom"
 import { voteBlog, addCommentToBlog } from "../../store/blogsReducer"
 import { setNotify } from "../../store/notificationReducer"
-
+import Button from "@mui/material/Button"
 const SingleBlogPost = () => {
 	const { id } = useParams()
 	const dispatch = useDispatch()
@@ -41,7 +41,9 @@ const SingleBlogPost = () => {
 			</div>
 			<h5>Author: {blog.author}</h5>
 			<input type={"text"} name={"comment"} ref={comment} />
-			<button onClick={() => handleAddComment()}>add comment</button>
+			<Button variant="contained" onClick={() => handleAddComment()}>
+				add comment
+			</Button>
 			{blog.comments ? (
 				<ul>
 					{blog.comments.map((c, i) => (

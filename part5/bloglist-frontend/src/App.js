@@ -13,6 +13,7 @@ import { dispatchLogout, dispatchUser } from "./store/usersReducer"
 import { nullifyNotificationD, setNotify } from "./store/notificationReducer"
 import MainPage from "./components/MainPage"
 import Header from "./components/Header/Header"
+import Button from "@mui/material/Button"
 
 const App = () => {
 	const dispatch = useDispatch()
@@ -76,13 +77,7 @@ const App = () => {
 				<div
 					style={{ display: "flex", justifyContent: "space-between" }}
 				>
-					<Header />
-					<div>
-						<span>
-							Well, <b>{user.username}</b> is definitely logged in
-						</span>
-						<button onClick={() => logout()}>logout</button>
-					</div>
+					<Header username={user.username} logout={logout} />
 				</div>
 			)}
 			{user === null ? (
