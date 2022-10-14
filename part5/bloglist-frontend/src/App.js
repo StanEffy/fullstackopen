@@ -13,6 +13,7 @@ import { dispatchLogout, dispatchUser } from "./store/usersReducer"
 import { nullifyNotificationD, setNotify } from "./store/notificationReducer"
 import MainPage from "./components/MainPage"
 import Header from "./components/Header/Header"
+import "./global.css"
 
 const App = () => {
 	const dispatch = useDispatch()
